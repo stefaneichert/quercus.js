@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quercus.js Demo</title>
+
+    <!-- Link to the Quercus.js stylesheet -->
+    <!-- Assuming treeview.css is in the src/ directory, relative path from demo/ -->
+    <link rel="stylesheet" href="../src/treeview.css">
+
+    <style>
+        /* General page styling, distinct from treeview.css */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #555;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        /* Container for individual treeview instances */
+        .my-treeview-container {
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 8px;
+            overflow: hidden; /* Ensures rounded corners apply cleanly */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        #output-area {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 6px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace; /* Nicer monospace font */
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #343a40;
+            line-height: 1.4;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quercus.js - Live Demo</h1>
+
+    <p class="section-header">Treeview 1: Default Configuration (Search Enabled, Collapsed)</p>
+    <div id="myTreeview1" class="my-treeview-container"></div>
+
+    <p class="section-header">Treeview 2: Custom Configuration (Search Disabled, Initially Expanded)</p>
+    <div id="myTreeview2" class="my-treeview-container"></div>
+
+    <p class="section-header">Selected Node Information:</p>
+    <div id="output-area">Click a node in either tree to see its data here.</div>
+
+    <!-- Link to the Quercus.js script -->
+    <!-- Assuming treeview.js is in the src/ directory, relative path from demo/ -->
+    <script src="../src/treeview.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const outputArea = document.getElementById('output-area');
+
+            // Sample JSON Data
+            const treeData = [
+                {
+                    id: 'doc-root',
+                    name: 'Documents',
+                    children: [
+                        {
+                            id: 'doc-work',
+                            name: 'Work',
+                            children: [
+                                { id: 'doc-alpha', name: 'Project Alpha' },
+                                { id: 'doc-beta', name: 'Project Beta' },
+                                { id: 'doc-notes', name: 'Meeting Notes' }
+                            ]
+                        },
+                        {
+                            id: 'doc-personal',
+                            name: 'Personal',
+                            children: [
+                                { id: 'doc-vacation', name: 'Vacation Photos' },
+                                { id: 'doc-resumes', name: 'Resumes' }
+                            ]
+                        },
+                        { id: 'doc-inbox', name: 'Inbox' }
+                    ]
+                },
+                {
+                    id: 'dl-root',
+                    name: 'Downloads',
+                    children: [
+                        { id: 'dl-software', name: 'Software' },
+                        { id: 'dl-archives', name: 'Archives' }
+                    ]
+                },
+                { id: 'music-root', name: 'Music' },
+                { id: 'videos-root', name: 'Videos' }
+            ];
+
+            // Initialize Treeview 1: Default (Search Enabled, Collapsed)
+            const tree1 = new Treeview({
+                containerId: 'myTreeview1',
+                data: treeData,
+                searchEnabled: true,
+                initiallyExpanded: false, // Default is false, but explicitly set for clarity
+                onNodeSelect: (nodeData) => {
+                    outputArea.textContent = JSON.stringify(nodeData, null, 2);
+                    console.log('Node Selected (Tree 1):', nodeData);
+                }
+            });
+
+            // Initialize Treeview 2: Custom (Search Enabled, Initially Expanded)
+            const tree2 = new Treeview({
+                containerId: 'myTreeview2',
+                data: treeData, // Using the same data for demonstration, but can be different
+                searchEnabled: false,
+                initiallyExpanded: true, // This tree will start fully expanded
+                onNodeSelect: (nodeData) => {
+                    outputArea.textContent = JSON.stringify(nodeData, null, 2);
+                    console.log('Node Selected (Tree 2):', nodeData);
+                }
+            });
+
+            // Example of using a public method programmatically after initialization
+            // setTimeout(() => {
+            //     tree1.search('project'); // Search Treeview 1 for 'project' after 3 seconds
+            // }, 3000);
+
+            // Example of changing data dynamically
+            // setTimeout(() => {
+            //     const newDataForTree2 = [
+            //         { id: 'dynamic-root', name: 'Dynamic Data', children: [
+            //             { id: 'dyn-item-1', name: 'New Dynamic Item 1' },
+            //             { id: 'dyn-item-2', name: 'New Dynamic Item 2' }
+            //         ]}
+            //     ];
+            //     tree2.setData(newDataForTree2);
+            // }, 6000);
+        });
+    </script>
+</body>
+</html>

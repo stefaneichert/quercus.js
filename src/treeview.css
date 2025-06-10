@@ -1,0 +1,105 @@
+/* treeview.css */
+
+/* Base container for the treeview instance */
+.custom-treeview-wrapper {
+    padding: 15px;
+    margin: 10px auto;
+}
+
+/* Search input specific to the library */
+.treeview-search-input {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Include padding in width */
+    font-size: 0.9em;
+}
+
+/* Tree structure styling - all selectors use .custom-treeview-wrapper class */
+.custom-treeview-wrapper ul {
+    list-style: none;
+    padding-left: 20px; /* Indent children */
+    margin: 0;
+    /* This rule applies to ALL ULs, but the height/overflow/transition below
+       will override it for *nested* ULs, making the root UL visible by default. */
+}
+
+.custom-treeview-wrapper li > ul {
+    height: 0; /* Default collapsed height for nested ULs */
+    overflow: hidden; /* Hide overflow during animation */
+    transition: height 0.3s ease-out; /* Smooth height transition */
+}
+
+.custom-treeview-wrapper li {
+    margin: 5px 0;
+    cursor: pointer;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden; /* Keep ellipsis working */
+    text-overflow: ellipsis;
+    position: relative;
+    padding-left: 20px; /* Space for expand/collapse icon */
+    font-size: 0.95em;
+    color: #333;
+}
+
+.custom-treeview-wrapper li:hover {
+    /*background-color: rgba(224, 224, 224, 1); uncomment if hover is desired*/
+}
+
+.custom-treeview-wrapper li.selected {
+    /*background-color: #cceeff;*/
+    font-weight: bold;
+    color: #0056b3; /* Darker text for selection */
+}
+
+/* Expand/collapse icon styling */
+.custom-treeview-wrapper li.has-children::before {
+    content: '+'; /* Plus sign for collapsed */
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    text-align: center;
+    color: #666;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out; /* Smooth transition for icon */
+}
+
+.custom-treeview-wrapper li.expanded.has-children::before {
+    content: '-'; /* Minus sign for expanded */
+}
+
+/* For search results - keep hidden with display: none for immediate effect */
+.custom-treeview-wrapper li.hidden {
+    display: none !important;
+}
+
+/* Highlight styling for ONLY the direct matching node */
+/* This rule applies directly to the <li> that has the 'highlight' class.*/
+.custom-treeview-wrapper li.highlight {
+    font-style: italic;
+    color: #731717; /* Dark red */
+    border-radius: 3px;
+    padding-right: 5px;
+}
+
+/* KEY RULE: Reset styles for ALL descendant <li> elements of a highlighted <li> */
+/* This is crucial to prevent inheritance. It says:
+   "If a parent <li> is highlighted (i.e., has .highlight class),
+   then ensure *any* <li> that is a descendant of it (a child, grandchild, etc.)
+   is NOT italic or dark red, and has a transparent background."*/
+.custom-treeview-wrapper li.highlight li {
+    font-style: normal; /* Override inherited italic */
+    color: #333; /* Reset to the default text color of the treeview */
+    background-color: transparent; /* Ensure no inherited background color */
+}
+
+/* This rule ensures that if a nested LI is *also* a match (e.g., if both "Project" and "Project Alpha" match),
+   it still gets its own highlight. This is for robustness but is usually covered by the first rule. */
+.custom-treeview-wrapper li.highlight li.highlight {
+    font-style: italic;
+    color: #731717;
+}
