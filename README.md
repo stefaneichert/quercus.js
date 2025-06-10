@@ -2,9 +2,23 @@
 
 **A Lightweight and Customizable JavaScript Treeview Library with absolutely no dependencies**
 
-Quercus.js (named after the botanical genus for oak trees) is a simple, yet powerful, JavaScript library for rendering hierarchical data as an interactive treeview. It comes with built-in search functionality, node selection, and smooth expand/collapse animations.
 
 ![img.png](img.png)
+
+(Screenshot)
+
+
+
+Quercus.js (named after the botanical genus for oak trees) is a simple, yet powerful, JavaScript library for rendering hierarchical data as an interactive treeview. It comes with built-in search functionality, node selection, and smooth expand/collapse animations.
+
+ You can find a **live demo** **[here.](https://stefaneichert.github.io/quercus.js/)**
+
+
+
+
+
+
+
 
 ---
 
