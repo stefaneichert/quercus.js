@@ -138,7 +138,9 @@ const tree2 = new Treeview({
 | `initiallyExpanded` | `boolean`     | `false`     | If `true`, all nodes will be expanded on initial load.                                                                                                                                                                                                                                                        |
 | `multiSelectEnabled` | `boolean`    | `false`     | If `true`, clicking a node's text will toggle its selection (add to or remove from selection). If `false`, clicking a node will deselect all other nodes and select only the clicked one.                                                                                                                           |
 | `onSelectionChange` | `function`    | `null`      | A callback function executed whenever the selected node(s) change. It receives an `Array<Object>` of all currently selected node data objects. If `multiSelectEnabled` is `false`, this array will contain at most one object. |
-| `onRenderNode` | `function`    | `null`      | A callback function for custom node rendering. It receives `nodeData` (the node's data object) and `nodeContentWrapperElement` (the `div` to populate). See "Custom Node Rendering" section below.|
+| `onRenderNode`      | `function`    | `null`      | A callback function for custom node rendering. It receives `nodeData` (the node's data object) and `nodeContentWrapperElement` (the `div` to populate). See "Custom Node Rendering" section below. |
+| `showSelectAllButton` | `boolean`   | `false`     | If `true` and `multiSelectEnabled` is also `true`, a "Select All" / "Deselect All" button will be displayed above the tree, allowing bulk selection toggling of all nodes. |
+| `showExpandCollapseAllButtons` | `boolean` | `false` | If `true`, "Expand All" and "Collapse All" buttons will be displayed above the tree, allowing bulk expansion or collapse of all nodes. |
 
 
 ---
