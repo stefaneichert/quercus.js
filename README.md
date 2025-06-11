@@ -158,10 +158,6 @@ You can interact with your `Treeview` instance after it's been initialized:
     const newTreeData = [{ id: '4', name: 'New Root', children: [{ id: '4.1', name: 'Sub Item' }] }];
     tree1.setData(newTreeData);
     ```
-
-* **`getSelectedNode(): Object | null`**
-    (Deprecated - use `getSelectedNodes()` for clarity, especially with multi-select). Returns the data object of the first selected node, or `null` if no node is selected.
-
 * **`getSelectedNodes(): Array<Object>`**
     Returns an array containing the data objects of all currently selected nodes. The array will be empty if no nodes are selected.
 
@@ -235,7 +231,8 @@ onRenderNode: (nodeData, nodeContentWrapperElement) => {
         sizeSpan.textContent = ` (${nodeData.size})`;
         nodeContentWrapperElement.appendChild(sizeSpan);
     }
-}```
+}
+```
 
 ## Styling
 
