@@ -35,15 +35,31 @@ Features
 ---
 
 ## Installation
+### Via npm
+Quercus.js is also available on npm, making it easy to integrate into your projects.
+```bash
+npm install quercus.js
+```
 
-To use Quercus.js in your project, simply copy the `treeview.js` and `treeview.css` files into your project's asset directory (e.g., `js/` and `css/`).
+### Via Download from GitHub
+You can also just download the library [here](https://github.com/stefaneichert/quercus.js/archive/refs/heads/main.zip) and extract it to some place in your project directory. 
 
-Then, link them in your HTML file:
+### Link the files in your HTML  
+You only need the `treeview.js` and `treeview.css` files in your project's asset directory (e.g., `js/` and `css/`) and link them in your HTML file:
 
 ```html
     <link rel="stylesheet" href="path/to/src/treeview.css">
     <script src="path/to/src/treeview.js"></script>
    ```
+
+Alternatively you could also embed them directly from GitHub 
+```html
+    <link rel="stylesheet" href="https://raw.githubusercontent.com/stefaneichert/quercus.js/refs/heads/main/src/treeview.css">
+    <script src="https://raw.githubusercontent.com/stefaneichert/quercus.js/refs/heads/main/src/treeview.js"></script>
+   ```
+
+
+
 
 ## Data
 
