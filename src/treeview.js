@@ -185,7 +185,7 @@
             this._triggerSelectionChange();
         }
 
-        // Expand All logic (UPDATED for smooth animation)
+        // Expand All logic
         _expandAll() {
             const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
             allExpandableNodes.forEach(li => {
