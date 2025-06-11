@@ -8,6 +8,7 @@
  * by clicking on the dedicated icon (+/-), while selection/deselection
  * happens by clicking on the node's text (multi-select enabled by config).
  *
+ * NEW: Optional "Select All/Deselect All" and "Expand All/Collapse All" buttons.
  * NEW: Custom Node Rendering via onRenderNode callback.
  */
 (function() { // Anonymous IIFE for encapsulation
@@ -38,13 +39,18 @@
                 initiallyExpanded: false,
                 multiSelectEnabled: false,
                 onSelectionChange: null,
-                onRenderNode: null // NEW: Callback for custom node rendering
+                onRenderNode: null,
+                showSelectAllButton: false,      // NEW: Option to show Select/Deselect All button
+                showExpandCollapseAllButtons: false // NEW: Option to show Expand/Collapse All buttons
             };
             Object.assign(this.options, options);
 
             this.treeviewContainer = null;
             this.treeSearchInput = null;
             this.selectedNodes = new Set();
+            this.selectAllButton = null;     // NEW: Reference to the select all button
+            this.expandAllButton = null;     // NEW: Reference to the expand all button
+            this.collapseAllButton = null;   // NEW: Reference to the collapse all button
 
             this._initialize();
         }
@@ -63,7 +69,7 @@
 
             this.treeviewContainer.classList.add('custom-treeview-wrapper');
 
-            this._createSearchBar();
+            this._createControls(); // NEW: Centralized control creation
             this._renderTree(this.options.data, this.treeviewContainer);
 
             if (this.options.initiallyExpanded) {
@@ -73,7 +79,8 @@
             }
         }
 
-        _createSearchBar() {
+        // NEW: Method to create all control elements (search, buttons)
+        _createControls() {
             if (this.options.searchEnabled) {
                 this.treeSearchInput = document.createElement('input');
                 this.treeSearchInput.type = 'text';
@@ -86,9 +93,106 @@
                     this._searchTree(event.target.value);
                 });
             }
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.classList.add('treeview-button-container');
+
+            if (this.options.showSelectAllButton && this.options.multiSelectEnabled) { // Select All button only makes sense with multi-select
+                this.selectAllButton = document.createElement('button');
+                this.selectAllButton.classList.add('treeview-control-button', 'treeview-select-all');
+                this.selectAllButton.textContent = 'Select All';
+                buttonContainer.appendChild(this.selectAllButton);
+
+                this.selectAllButton.addEventListener('click', () => this._toggleSelectAll());
+            }
+
+            if (this.options.showExpandCollapseAllButtons) {
+                this.expandAllButton = document.createElement('button');
+                this.expandAllButton.classList.add('treeview-control-button', 'treeview-expand-all');
+                this.expandAllButton.textContent = 'Expand All';
+                buttonContainer.appendChild(this.expandAllButton);
+
+                this.expandAllButton.addEventListener('click', () => this._expandAll());
+
+                this.collapseAllButton = document.createElement('button');
+                this.collapseAllButton.classList.add('treeview-control-button', 'treeview-collapse-all');
+                this.collapseAllButton.textContent = 'Collapse All';
+                buttonContainer.appendChild(this.collapseAllButton);
+
+                this.collapseAllButton.addEventListener('click', () => this._collapseAll());
+            }
+
+            if (buttonContainer.children.length > 0) { // Only append if there are buttons
+                this.treeviewContainer.appendChild(buttonContainer);
+            }
         }
 
-        // Function to render the tree from JSON data (UPDATED for onRenderNode)
+        // NEW: Toggle Select All / Deselect All logic
+        _toggleSelectAll() {
+            const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
+            const currentlySelectedCount = this.selectedNodes.size;
+
+            if (currentlySelectedCount === allSelectableNodes.length) {
+                // All are selected, so deselect all
+                this.selectedNodes.forEach(node => node.classList.remove('selected'));
+                this.selectedNodes.clear();
+                if (this.selectAllButton) this.selectAllButton.textContent = 'Select All';
+            } else {
+                // Not all are selected, so select all
+                allSelectableNodes.forEach(li => {
+                    if (!this.selectedNodes.has(li)) { // Only add if not already in set
+                        this.selectedNodes.add(li);
+                        li.classList.add('selected');
+                    }
+                });
+                if (this.selectAllButton) this.selectAllButton.textContent = 'Deselect All';
+            }
+            this._triggerSelectionChange();
+        }
+
+        // NEW: Expand All logic
+        _expandAll() {
+            const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
+            allExpandableNodes.forEach(li => {
+                if (!li.classList.contains('expanded')) {
+                    li.classList.add('expanded');
+                    const expander = li.querySelector('.treeview-expander');
+                    if (expander) expander.textContent = '-';
+                    const childUl = li.querySelector('ul');
+                    if (childUl) {
+                        childUl.style.height = 'auto'; // Instant expand for 'expand all'
+                    }
+                }
+            });
+        }
+
+        // NEW: Collapse All logic
+        _collapseAll() {
+            const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
+            // Iterate in reverse to avoid layout issues during collapse animations
+            for (let i = allExpandableNodes.length - 1; i >= 0; i--) {
+                const li = allExpandableNodes[i];
+                if (li.classList.contains('expanded')) {
+                    li.classList.remove('expanded');
+                    const expander = li.querySelector('.treeview-expander');
+                    if (expander) expander.textContent = '+';
+                    const childUl = li.querySelector('ul');
+                    if (childUl) {
+                        childUl.style.height = `${childUl.scrollHeight}px`; // Lock height for animation
+                        requestAnimationFrame(() => {
+                            childUl.style.height = '0px';
+                        });
+                        childUl.addEventListener('transitionend', function handler() {
+                            childUl.removeEventListener('transitionend', handler);
+                            childUl.style.height = ''; // Clear height after transition
+                        }, { once: true });
+                    }
+                }
+            }
+        }
+
+
+        // Function to render the tree from JSON data
         _renderTree(data, parentElement) {
             const ul = document.createElement('ul');
             parentElement.appendChild(ul);
@@ -96,15 +200,12 @@
             data.forEach(node => {
                 const li = document.createElement('li');
                 li.dataset.id = node.id;
-                li.dataset.nodeData = JSON.stringify(node); // Store full node data
+                li.dataset.nodeData = JSON.stringify(node);
 
                 const nodeContentWrapper = document.createElement('div');
                 nodeContentWrapper.classList.add('treeview-node-content');
 
-                // --- NEW: Custom Node Rendering Logic ---
                 if (typeof this.options.onRenderNode === 'function') {
-                    // Call the custom renderer, passing the node data and the wrapper
-                    // The renderer is responsible for populating the wrapper's content
                     try {
                          this.options.onRenderNode(node, nodeContentWrapper);
                     } catch (e) {
@@ -112,13 +213,11 @@
                          nodeContentWrapper.textContent = node.name; // Fallback
                     }
                 } else {
-                    // Default rendering: Create a span for the node's name text
                     const nodeTextSpan = document.createElement('span');
                     nodeTextSpan.classList.add('treeview-node-text');
                     nodeTextSpan.textContent = node.name;
                     nodeContentWrapper.appendChild(nodeTextSpan);
                 }
-                // --- END NEW ---
 
 
                 if (node.children && node.children.length > 0) {
@@ -128,7 +227,7 @@
                     expander.classList.add('treeview-expander');
                     expander.textContent = this.options.initiallyExpanded ? '-' : '+';
 
-                    nodeContentWrapper.prepend(expander); // Prepend expander to content wrapper
+                    nodeContentWrapper.prepend(expander);
                     li.appendChild(nodeContentWrapper);
 
                     if (this.options.initiallyExpanded) {
@@ -166,18 +265,15 @@
                         event.stopPropagation();
                     });
                 } else {
-                    // For leaf nodes, add a placeholder span for alignment
                     const placeholderExpander = document.createElement('span');
                     placeholderExpander.classList.add('treeview-expander-placeholder');
-                    nodeContentWrapper.prepend(placeholderExpander); // Prepend placeholder to content wrapper
+                    nodeContentWrapper.prepend(placeholderExpander);
                     li.appendChild(nodeContentWrapper);
                 }
 
-                // Event listener for selection (ONLY on the node content wrapper)
                 nodeContentWrapper.addEventListener('click', (event) => {
-                    // Ensure the click was not on the expander icon itself
                     if (!event.target.classList.contains('treeview-expander')) {
-                         this._selectNode(li); // Pass the li element
+                         this._selectNode(li);
                     }
                     event.stopPropagation();
                 });
@@ -186,7 +282,6 @@
             });
         }
 
-        // Function to handle node selection (always toggle if multiSelectEnabled)
         _selectNode(nodeElement) {
             if (this.options.multiSelectEnabled) {
                 if (this.selectedNodes.has(nodeElement)) {
@@ -222,9 +317,17 @@
                 });
                 this.options.onSelectionChange(selectedData);
             }
+            // Update Select All button text based on current selection state
+            if (this.selectAllButton && this.options.multiSelectEnabled) {
+                const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
+                if (this.selectedNodes.size === allSelectableNodes.length && allSelectableNodes.length > 0) {
+                    this.selectAllButton.textContent = 'Deselect All';
+                } else {
+                    this.selectAllButton.textContent = 'Select All';
+                }
+            }
         }
 
-        // Function to search the tree (UPDATED: Search based on original node.name)
         _searchTree(searchTerm) {
             const allListItems = this.treeviewContainer.querySelectorAll('li');
             const matchingNodes = new Set();
@@ -277,9 +380,8 @@
             });
 
             allListItems.forEach(item => {
-                // *** KEY CHANGE HERE: Search based on original node.name from dataset ***
                 const nodeData = JSON.parse(item.dataset.nodeData);
-                const searchableText = nodeData.name || ''; // Fallback to empty string if no name
+                const searchableText = nodeData.name || '';
 
                 if (searchableText.toLowerCase().includes(searchTerm.toLowerCase())) {
                     matchingNodes.add(item);
@@ -321,7 +423,7 @@
             this.options.data = newData;
             this.treeviewContainer.innerHTML = '';
             this.selectedNodes.clear();
-            this._createSearchBar();
+            this._createControls(); // Re-create search bar and buttons
             this._renderTree(this.options.data, this.treeviewContainer);
 
             if (this.options.initiallyExpanded) {
@@ -338,7 +440,6 @@
                     return JSON.parse(nodeElement.dataset.nodeData);
                 } catch (e) {
                     console.error("Quercus.js: Error parsing selected node data:", e);
-                    // Fallback to basic info if full data parsing fails
                     return { id: nodeElement.dataset.id, name: getDisplayNameFromNodeElement(nodeElement) };
                 }
             });

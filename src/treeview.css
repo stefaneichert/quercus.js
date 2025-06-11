@@ -91,6 +91,10 @@
 /*    background-color: #e0e0e0; */
 /* } */
 
+.custom-treeview-wrapper li * {
+    transition: background-color 0.2s ease-in-out;
+}
+
 .custom-treeview-wrapper li.selected > .treeview-node-content { /* Apply selected style to the content wrapper */
     background-color: rgba(100, 149, 237, 0.22);
     color: #0056b3;
@@ -121,4 +125,30 @@
 .custom-treeview-wrapper li.highlight li.highlight > .treeview-node-content {
     font-style: italic;
     color: #731717;
+}
+
+.treeview-control-button {
+    padding: 8px 15px;
+    margin-right: 5px;
+    margin-bottom: 3px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-grow: 1; /* Allow buttons to grow to fill space */
+    min-width: 110px; /* Minimum width for buttons */
+    max-width: 48%; /* Max width to allow two columns on wider screens */
+}
+
+.treeview-control-button:hover {
+    background-color: #0056b3;
+}
+
+.treeview-control-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }

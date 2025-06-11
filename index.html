@@ -69,24 +69,24 @@
             font-style: italic;
         }
         .custom-treeview-wrapper .custom-node-name {
-            font-weight: 500; /* Slightly bolder name */
+            font-weight: 500;
         }
         .custom-treeview-wrapper .custom-node-status-active {
-            color: #28a745; /* Green */
+            color: #28a745;
             font-weight: bold;
         }
         .custom-treeview-wrapper .custom-node-status-inactive {
-            color: #dc3545; /* Red */
+            color: #dc3545;
         }
     </style>
 </head>
 <body>
     <h1>Quercus.js - Live Demo</h1>
 
-    <p class="section-header">Treeview 1: Multi-Select Enabled (Default Rendering)</p>
+    <p class="section-header">Treeview 1: Multi-Select, All Buttons Enabled, Default Rendering</p>
     <div id="myTreeview1" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 2: Custom Node Rendering & Single-Select</p>
+    <p class="section-header">Treeview 2: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
     <div id="myTreeview2" class="my-treeview-container"></div>
 
     <p class="section-header">Selected Node(s) Information:</p>
@@ -104,30 +104,32 @@
                     name: 'Documents',
                     type: 'folder',
                     status: 'active',
-                    description: 'All company documents'
-                },
-                {
-                    id: 'doc-work',
-                    name: 'Work',
-                    type: 'folder',
-                    status: 'active',
+                    description: 'All company documents',
                     children: [
-                        { id: 'doc-alpha', name: 'Project Alpha', type: 'file', status: 'active', size: '1.2MB' },
-                        { id: 'doc-beta', name: 'Project Beta', type: 'file', status: 'inactive', size: '0.8MB' },
-                        { id: 'doc-notes', name: 'Meeting Notes', type: 'file', status: 'active', lastModified: '2023-01-15' }
+                        {
+                            id: 'doc-work',
+                            name: 'Work',
+                            type: 'folder',
+                            status: 'active',
+                            children: [
+                                { id: 'doc-alpha', name: 'Project Alpha', type: 'file', status: 'active', size: '1.2MB' },
+                                { id: 'doc-beta', name: 'Project Beta', type: 'file', status: 'inactive', size: '0.8MB' },
+                                { id: 'doc-notes', name: 'Meeting Notes', type: 'file', status: 'active', lastModified: '2023-01-15' }
+                            ]
+                        },
+                        {
+                            id: 'doc-personal',
+                            name: 'Personal',
+                            type: 'folder',
+                            status: 'active',
+                            children: [
+                                { id: 'doc-vacation', name: 'Vacation Photos', type: 'image', status: 'active' },
+                                { id: 'doc-resumes', name: 'Resumes', type: 'file', status: 'active' }
+                            ]
+                        },
+                        { id: 'doc-inbox', name: 'Inbox', type: 'folder', status: 'inactive' }
                     ]
                 },
-                {
-                    id: 'doc-personal',
-                    name: 'Personal',
-                    type: 'folder',
-                    status: 'active',
-                    children: [
-                        { id: 'doc-vacation', name: 'Vacation Photos', type: 'image', status: 'active' },
-                        { id: 'doc-resumes', name: 'Resumes', type: 'file', status: 'active' }
-                    ]
-                },
-                { id: 'doc-inbox', name: 'Inbox', type: 'folder', status: 'inactive' },
                 {
                     id: 'dl-root',
                     name: 'Downloads',
@@ -142,7 +144,7 @@
                 { id: 'videos-root', name: 'Videos', type: 'folder', status: 'inactive' }
             ];
 
-            // Initialize Treeview 1: Multi-Select Enabled (Default Rendering)
+            // Initialize Treeview 1: Multi-Select, All Buttons Enabled, Default Rendering
             const tree1 = new Treeview({
                 containerId: 'myTreeview1',
                 data: treeData,
@@ -152,13 +154,15 @@
                 onSelectionChange: (selectedNodesData) => {
                     outputArea.textContent = 'Selected Nodes (Tree 1):\n' + JSON.stringify(selectedNodesData, null, 2);
                     console.log('Selected Nodes (Tree 1):', selectedNodesData);
-                }
+                },
+                showSelectAllButton: true,      // Show Select/Deselect All button
+                showExpandCollapseAllButtons: true // Show Expand/Collapse All buttons
             });
 
-            // Initialize Treeview 2: Custom Node Rendering & Single-Select
+            // Initialize Treeview 2: Single-Select, Expand/Collapse All Buttons, Custom Rendering
             const tree2 = new Treeview({
                 containerId: 'myTreeview2',
-                data: treeData, // Using the same data for demonstration
+                data: treeData,
                 searchEnabled: true,
                 initiallyExpanded: true,
                 multiSelectEnabled: false,
@@ -166,32 +170,29 @@
                     outputArea.textContent = 'Selected Node (Tree 2):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
                     console.log('Selected Node (Tree 2):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
                 },
-                // NEW: Custom Node Renderer
+                showSelectAllButton: false,      // No Select All button for single-select tree
+                showExpandCollapseAllButtons: true, // Show Expand/Collapse All buttons
                 onRenderNode: (nodeData, nodeContentWrapperElement) => {
-                    // Clear existing content if any (important for setData calls)
-                    nodeContentWrapperElement.innerHTML = '';
+                    nodeContentWrapperElement.innerHTML = ''; // Clear existing content
 
-                    // Create an icon based on node type
                     const iconSpan = document.createElement('span');
                     iconSpan.classList.add('custom-node-icon');
                     if (nodeData.type === 'folder') {
-                        iconSpan.textContent = '📁'; // Folder emoji
+                        iconSpan.textContent = '📁';
                     } else if (nodeData.type === 'file') {
-                        iconSpan.textContent = '📄'; // File emoji
+                        iconSpan.textContent = '📄';
                     } else if (nodeData.type === 'image') {
-                        iconSpan.textContent = '🖼️'; // Image emoji
+                        iconSpan.textContent = '🖼️';
                     } else {
-                        iconSpan.textContent = '▪️'; // Default bullet
+                        iconSpan.textContent = '▪️';
                     }
                     nodeContentWrapperElement.appendChild(iconSpan);
 
-                    // Create a span for the node name
                     const nameSpan = document.createElement('span');
-                    nameSpan.classList.add('treeview-node-text', 'custom-node-name'); // Keep treeview-node-text for search
+                    nameSpan.classList.add('treeview-node-text', 'custom-node-name');
                     nameSpan.textContent = nodeData.name;
                     nodeContentWrapperElement.appendChild(nameSpan);
 
-                    // Add a description/status if available
                     if (nodeData.description) {
                         const descSpan = document.createElement('span');
                         descSpan.classList.add('custom-node-description');
