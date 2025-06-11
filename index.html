@@ -56,7 +56,7 @@
             font-size: 0.9em;
         }
 
-        /* Custom styles for the rendered nodes in Treeview 2 */
+        /* Custom styles for the rendered nodes in Treeview 2 and 3 */
         .custom-treeview-wrapper .custom-node-icon {
             margin-right: 8px;
             color: #6c757d;
@@ -88,21 +88,22 @@
         .main-header h1 {
             margin: 20px;
         }
-
-
     </style>
 </head>
 <body>
     <div class="main-header"><img height="40px" src="logo.png"><h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
 
-    <p class="section-header">Treeview 1: Default tree, no actions triggered </p>
-    <div id="myTreeview1"></div>
+    <p class="section-header">Treeview 1: Default tree, Node Selection Disabled</p>
+    <div id="myTreeview1" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 2: Multi-Select, Select Button Enabled, Default Rendering</p>
-    <div id="myTreeview2"></div>
+    <p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering</p>
+    <div id="myTreeview2" class="my-treeview-container"></div>
 
     <p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
-    <div id="myTreeview3"></div>
+    <div id="myTreeview3" class="my-treeview-container"></div>
+
+    <p class="section-header">Treeview 4: Single-Select with Cascade Children</p>
+    <div id="myTreeview4" class="my-treeview-container"></div>
 
     <p class="section-header">Selected Node(s) Information:</p>
     <div id="output-area">Click a node in either tree to select/deselect it.</div>
@@ -159,13 +160,14 @@
                 { id: 'videos-root', name: 'Videos', type: 'folder', status: 'inactive' }
             ];
 
-            // Initialize Treeview 1: Default
+            // Initialize Treeview 1: Default tree, Node Selection Disabled
             const tree1 = new Treeview({
                 containerId: 'myTreeview1',
                 data: treeData,
-            })
+                nodeSelectionEnabled: false // Node selection is disabled for this tree
+            });
 
-            // Initialize Treeview 2: Multi-Select, All Buttons Enabled, Default Rendering
+            // Initialize Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering
             const tree2 = new Treeview({
                 containerId: 'myTreeview2',
                 data: treeData,
@@ -174,10 +176,10 @@
                 multiSelectEnabled: true,
                 onSelectionChange: (selectedNodesData) => {
                     outputArea.textContent = 'Selected Nodes (Tree 2):\n' + JSON.stringify(selectedNodesData, null, 2);
-                    console.log('Selected Nodes (Tree 1):', selectedNodesData);
+                    console.log('Selected Nodes (Tree 2):', selectedNodesData);
                 },
-                showSelectAllButton: true,      // Show Select/Deselect All button
-                showExpandCollapseAllButtons: false // Show Expand/Collapse All buttons
+                showSelectAllButton: true,
+                showExpandCollapseAllButtons: false
             });
 
             // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering
@@ -189,12 +191,12 @@
                 multiSelectEnabled: false,
                 onSelectionChange: (selectedNodesData) => {
                     outputArea.textContent = 'Selected Node (Tree 3):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
-                    console.log('Selected Node (Tree 2):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
+                    console.log('Selected Node (Tree 3):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
                 },
-                showSelectAllButton: false,      // No Select All button for single-select tree
-                showExpandCollapseAllButtons: true, // Show Expand/Collapse All buttons
+                showSelectAllButton: false,
+                showExpandCollapseAllButtons: true,
                 onRenderNode: (nodeData, nodeContentWrapperElement) => {
-                    nodeContentWrapperElement.innerHTML = ''; // Clear existing content
+                    nodeContentWrapperElement.innerHTML = '';
 
                     const iconSpan = document.createElement('span');
                     iconSpan.classList.add('custom-node-icon');
@@ -231,6 +233,21 @@
                         sizeSpan.textContent = ` (${nodeData.size})`;
                         nodeContentWrapperElement.appendChild(sizeSpan);
                     }
+                }
+            });
+
+            // NEW: Initialize Treeview 4: Single-Select with Cascade Children
+            const tree4 = new Treeview({
+                containerId: 'myTreeview4',
+                data: treeData,
+                searchEnabled: false,
+                initiallyExpanded: false,
+                multiSelectEnabled: false, // Must be false for cascadeSelectChildren to apply as per your request
+                nodeSelectionEnabled: true, // Ensure node selection is enabled
+                cascadeSelectChildren: true, // Enable cascading selection
+                onSelectionChange: (selectedNodesData) => {
+                    outputArea.textContent = 'Selected Nodes (Tree 4 - Cascading):\n' + JSON.stringify(selectedNodesData, null, 2);
+                    console.log('Selected Nodes (Tree 4 - Cascading):', selectedNodesData);
                 }
             });
         });

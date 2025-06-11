@@ -10,6 +10,8 @@
  *
  * Optional "Select All/Deselect All" and "Expand All/Collapse All" buttons.
  * Custom Node Rendering via onRenderNode callback.
+ * Option to disable node selection.
+ * Option to cascade selection to children when a parent is selected (only if multiSelectEnabled is false).
  */
 (function() { // Anonymous IIFE for encapsulation
 
@@ -40,17 +42,19 @@
                 multiSelectEnabled: false,
                 onSelectionChange: null,
                 onRenderNode: null,
-                showSelectAllButton: false,      // Option to show Select/Deselect All button
-                showExpandCollapseAllButtons: false // Option to show Expand/Collapse All buttons
+                showSelectAllButton: false,
+                showExpandCollapseAllButtons: false,
+                nodeSelectionEnabled: true,
+                cascadeSelectChildren: false // Option to cascade selection to children
             };
             Object.assign(this.options, options);
 
             this.treeviewContainer = null;
             this.treeSearchInput = null;
             this.selectedNodes = new Set();
-            this.selectAllButton = null;     // Reference to the select all button
-            this.expandAllButton = null;     // Reference to the expand all button
-            this.collapseAllButton = null;   // Reference to the collapse all button
+            this.selectAllButton = null;
+            this.expandAllButton = null;
+            this.collapseAllButton = null;
 
             this._initialize();
         }
@@ -69,7 +73,7 @@
 
             this.treeviewContainer.classList.add('custom-treeview-wrapper');
 
-            this._createControls(); // Centralized control creation
+            this._createControls();
             this._renderTree(this.options.data, this.treeviewContainer);
 
             if (this.options.initiallyExpanded) {
@@ -77,6 +81,30 @@
                     ul.style.height = 'auto';
                 });
             }
+        }
+
+        /**
+         * Helper function to recursively get all descendant <li> elements of a given node.
+         * @param {HTMLElement} liElement The <li> DOM element representing the parent node.
+         * @returns {Array<HTMLElement>} An array of all descendant <li> elements.
+         */
+        _getAllDescendants(liElement) {
+            const descendants = [];
+            const queue = [liElement]; // Start with the parent node itself in the queue
+
+            let head = 0;
+            while (head < queue.length) {
+                const currentLi = queue[head++]; // Dequeue current node
+                const childUl = currentLi.querySelector('ul');
+                if (childUl) {
+                    // Iterate directly over children of the UL to avoid adding parent itself repeatedly
+                    Array.from(childUl.children).forEach(childLi => {
+                        descendants.push(childLi);
+                        queue.push(childLi); // Enqueue children for their descendants
+                    });
+                }
+            }
+            return descendants;
         }
 
         // Method to create all control elements (search, buttons)
@@ -97,7 +125,8 @@
             const buttonContainer = document.createElement('div');
             buttonContainer.classList.add('treeview-button-container');
 
-            if (this.options.showSelectAllButton && this.options.multiSelectEnabled) { // Select All button only makes sense with multi-select
+            // Select All button only makes sense if multi-select is enabled AND node selection is enabled
+            if (this.options.showSelectAllButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled) {
                 this.selectAllButton = document.createElement('button');
                 this.selectAllButton.classList.add('treeview-control-button', 'treeview-select-all');
                 this.selectAllButton.textContent = 'Select All';
@@ -122,13 +151,19 @@
                 this.collapseAllButton.addEventListener('click', () => this._collapseAll());
             }
 
-            if (buttonContainer.children.length > 0) { // Only append if there are buttons
+            if (buttonContainer.children.length > 0) {
                 this.treeviewContainer.appendChild(buttonContainer);
             }
         }
 
         // Toggle Select All / Deselect All logic
         _toggleSelectAll() {
+            // Only proceed if node selection is enabled
+            if (!this.options.nodeSelectionEnabled) {
+                console.warn("Quercus.js: Node selection is disabled, cannot select/deselect all nodes.");
+                return;
+            }
+
             const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
             const currentlySelectedCount = this.selectedNodes.size;
 
@@ -271,19 +306,33 @@
                     li.appendChild(nodeContentWrapper);
                 }
 
-                nodeContentWrapper.addEventListener('click', (event) => {
-                    if (!event.target.classList.contains('treeview-expander')) {
-                         this._selectNode(li);
-                    }
-                    event.stopPropagation();
-                });
+                // IMPORTANT: Only attach selection listener if nodeSelectionEnabled is true
+                if (this.options.nodeSelectionEnabled) {
+                    nodeContentWrapper.addEventListener('click', (event) => {
+                        // Prevent selection when clicking the expander
+                        if (!event.target.classList.contains('treeview-expander')) {
+                             this._selectNode(li);
+                        }
+                        event.stopPropagation();
+                    });
+                } else {
+                    // Optional: Change cursor if selection is disabled
+                    nodeContentWrapper.style.cursor = 'default';
+                }
 
                 ul.appendChild(li);
             });
         }
 
         _selectNode(nodeElement) {
+            // Defensive check if selection is disabled (though event listener handles primary control)
+            if (!this.options.nodeSelectionEnabled) {
+                console.warn("Quercus.js: Attempted to select a node while selection is disabled.");
+                return;
+            }
+
             if (this.options.multiSelectEnabled) {
+                // Multi-select behavior: Toggle the clicked node's selection
                 if (this.selectedNodes.has(nodeElement)) {
                     this.selectedNodes.delete(nodeElement);
                     nodeElement.classList.remove('selected');
@@ -292,16 +341,25 @@
                     nodeElement.classList.add('selected');
                 }
             } else {
-                const wasAlreadySolelySelected = this.selectedNodes.has(nodeElement) && this.selectedNodes.size === 1;
-
+                // Single-select behavior (including cascadeSelectChildren logic)
+                // First, clear all previously selected nodes (visual and from the set)
                 this.selectedNodes.forEach(node => node.classList.remove('selected'));
                 this.selectedNodes.clear();
 
-                if (!wasAlreadySolelySelected) {
-                    this.selectedNodes.add(nodeElement);
-                    nodeElement.classList.add('selected');
+                // Then, select the clicked node as the new sole selection
+                this.selectedNodes.add(nodeElement);
+                nodeElement.classList.add('selected');
+
+                // Apply cascading selection ONLY if cascadeSelectChildren is true
+                if (this.options.cascadeSelectChildren) {
+                    const descendants = this._getAllDescendants(nodeElement);
+                    descendants.forEach(descendantLi => {
+                        this.selectedNodes.add(descendantLi);
+                        descendantLi.classList.add('selected');
+                    });
                 }
             }
+
             this._triggerSelectionChange();
         }
 
@@ -318,7 +376,7 @@
                 this.options.onSelectionChange(selectedData);
             }
             // Update Select All button text based on current selection state
-            if (this.selectAllButton && this.options.multiSelectEnabled) {
+            if (this.selectAllButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled) {
                 const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
                 if (this.selectedNodes.size === allSelectableNodes.length && allSelectableNodes.length > 0) {
                     this.selectAllButton.textContent = 'Deselect All';
