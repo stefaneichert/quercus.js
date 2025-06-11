@@ -185,7 +185,7 @@
             this._triggerSelectionChange();
         }
 
-        // Expand All logic
+        // Expand All logic (UPDATED for smooth animation)
         _expandAll() {
             const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
             allExpandableNodes.forEach(li => {
@@ -195,7 +195,17 @@
                     if (expander) expander.textContent = '-';
                     const childUl = li.querySelector('ul');
                     if (childUl) {
-                        childUl.style.height = 'auto'; // Instant expand for 'expand all'
+                        // Set height to 0 to prepare for transition
+                        childUl.style.height = '0px';
+                        // Use requestAnimationFrame to ensure reflow before setting final height
+                        requestAnimationFrame(() => {
+                            childUl.style.height = `${childUl.scrollHeight}px`;
+                        });
+                        // After transition, reset height to auto to allow natural content flow
+                        childUl.addEventListener('transitionend', function handler() {
+                            childUl.removeEventListener('transitionend', handler);
+                            childUl.style.height = 'auto';
+                        }, { once: true });
                     }
                 }
             });
