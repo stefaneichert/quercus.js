@@ -1,6 +1,6 @@
 {
   "name": "quercus.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A Lightweight and Customizable JavaScript Treeview Library with no dependencies.",
   "main": "src/treeview.js",
   "scripts": {
