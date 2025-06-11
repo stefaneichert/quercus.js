@@ -1,14 +1,15 @@
+![logo.png](logo.png)
 # Quercus.js
 
 **A Lightweight and Customizable JavaScript Treeview Library with absolutely no dependencies**
 
-![img.png](img.png)
+![img.png ](img.png)
 
 (Screenshot)
 
-Quercus.js (named after the botanical genus for oak trees, symbolizing strength and structure) is a simple, yet powerful, JavaScript library for rendering hierarchical data as an interactive treeview. It comes with built-in search functionality, node selection, and smooth expand/collapse animations.
+Quercus.js (named after the botanical genus for oak trees) is a simple, yet powerful, JavaScript library for rendering hierarchical data as an interactive treeview. It comes with built-in search functionality, node selection, and smooth expand/collapse animations.
 
-You can find a **[Live Demo](https://stefaneichert.github.io/quercus.js/)**
+Here you can find a **[Live Demo](https://stefaneichert.github.io/quercus.js/)**
 
 
 
@@ -27,6 +28,8 @@ Features
 * **Search Functionality:** Quickly filter nodes based on their direct text content, highlighting matches and expanding relevant paths.
 * **Smooth Animations:** Elegant expand and collapse transitions for a better user experience.
 * **Customizable:** Easy to style with standard CSS.
+* **Custom Node Rendering:** Nodes can be rendered using HTML and CSS based on their attributes.
+* **Controls:** Control buttons for selecting/deselecting, expanding/collapsing the nodes.
 * **Lightweight:** No external dependencies.
 
 ---
@@ -80,10 +83,10 @@ In order to create a tree in your html you need one (or multiple) container(s) t
 
 ```html
     <h2>First Tree</h2>
-    <div id="myTreeview1" class="my-treeview-container"></div>
+    <div id="myTreeview1"></div>
 
     <h2>Another Tree)</h2>
-    <div id="myTreeview2" class="my-treeview-container"></div>
+    <div id="myTreeview2" class="my-treeview-container-with-my-own-css"></div>
 ```
 
 ## JavaScript Initialization
