@@ -8,8 +8,8 @@
  * by clicking on the dedicated icon (+/-), while selection/deselection
  * happens by clicking on the node's text (multi-select enabled by config).
  *
- * NEW: Optional "Select All/Deselect All" and "Expand All/Collapse All" buttons.
- * NEW: Custom Node Rendering via onRenderNode callback.
+ * Optional "Select All/Deselect All" and "Expand All/Collapse All" buttons.
+ * Custom Node Rendering via onRenderNode callback.
  */
 (function() { // Anonymous IIFE for encapsulation
 
@@ -35,22 +35,22 @@
             this.options = {
                 containerId: null,
                 data: [],
-                searchEnabled: true,
+                searchEnabled: false,
                 initiallyExpanded: false,
                 multiSelectEnabled: false,
                 onSelectionChange: null,
                 onRenderNode: null,
-                showSelectAllButton: false,      // NEW: Option to show Select/Deselect All button
-                showExpandCollapseAllButtons: false // NEW: Option to show Expand/Collapse All buttons
+                showSelectAllButton: false,      // Option to show Select/Deselect All button
+                showExpandCollapseAllButtons: false // Option to show Expand/Collapse All buttons
             };
             Object.assign(this.options, options);
 
             this.treeviewContainer = null;
             this.treeSearchInput = null;
             this.selectedNodes = new Set();
-            this.selectAllButton = null;     // NEW: Reference to the select all button
-            this.expandAllButton = null;     // NEW: Reference to the expand all button
-            this.collapseAllButton = null;   // NEW: Reference to the collapse all button
+            this.selectAllButton = null;     // Reference to the select all button
+            this.expandAllButton = null;     // Reference to the expand all button
+            this.collapseAllButton = null;   // Reference to the collapse all button
 
             this._initialize();
         }
@@ -69,7 +69,7 @@
 
             this.treeviewContainer.classList.add('custom-treeview-wrapper');
 
-            this._createControls(); // NEW: Centralized control creation
+            this._createControls(); // Centralized control creation
             this._renderTree(this.options.data, this.treeviewContainer);
 
             if (this.options.initiallyExpanded) {
@@ -79,7 +79,7 @@
             }
         }
 
-        // NEW: Method to create all control elements (search, buttons)
+        // Method to create all control elements (search, buttons)
         _createControls() {
             if (this.options.searchEnabled) {
                 this.treeSearchInput = document.createElement('input');
@@ -127,7 +127,7 @@
             }
         }
 
-        // NEW: Toggle Select All / Deselect All logic
+        // Toggle Select All / Deselect All logic
         _toggleSelectAll() {
             const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
             const currentlySelectedCount = this.selectedNodes.size;
@@ -150,7 +150,7 @@
             this._triggerSelectionChange();
         }
 
-        // NEW: Expand All logic
+        // Expand All logic
         _expandAll() {
             const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
             allExpandableNodes.forEach(li => {
@@ -166,7 +166,7 @@
             });
         }
 
-        // NEW: Collapse All logic
+        // Collapse All logic
         _collapseAll() {
             const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
             // Iterate in reverse to avoid layout issues during collapse animations

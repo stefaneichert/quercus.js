@@ -95,11 +95,14 @@
 <body>
     <div class="main-header"><img height="40px" src="logo.png"><h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
 
-    <p class="section-header">Treeview 1: Multi-Select, All Buttons Enabled, Default Rendering</p>
-    <div id="myTreeview1" class="my-treeview-container"></div>
+    <p class="section-header">Treeview 1: Default tree, no actions triggered </p>
+    <div id="myTreeview1"></div>
 
-    <p class="section-header">Treeview 2: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
-    <div id="myTreeview2" class="my-treeview-container"></div>
+    <p class="section-header">Treeview 2: Multi-Select, Select Button Enabled, Default Rendering</p>
+    <div id="myTreeview2"></div>
+
+    <p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
+    <div id="myTreeview3"></div>
 
     <p class="section-header">Selected Node(s) Information:</p>
     <div id="output-area">Click a node in either tree to select/deselect it.</div>
@@ -156,30 +159,36 @@
                 { id: 'videos-root', name: 'Videos', type: 'folder', status: 'inactive' }
             ];
 
-            // Initialize Treeview 1: Multi-Select, All Buttons Enabled, Default Rendering
+            // Initialize Treeview 1: Default
             const tree1 = new Treeview({
                 containerId: 'myTreeview1',
+                data: treeData,
+            })
+
+            // Initialize Treeview 2: Multi-Select, All Buttons Enabled, Default Rendering
+            const tree2 = new Treeview({
+                containerId: 'myTreeview2',
                 data: treeData,
                 searchEnabled: true,
                 initiallyExpanded: false,
                 multiSelectEnabled: true,
                 onSelectionChange: (selectedNodesData) => {
-                    outputArea.textContent = 'Selected Nodes (Tree 1):\n' + JSON.stringify(selectedNodesData, null, 2);
+                    outputArea.textContent = 'Selected Nodes (Tree 2):\n' + JSON.stringify(selectedNodesData, null, 2);
                     console.log('Selected Nodes (Tree 1):', selectedNodesData);
                 },
                 showSelectAllButton: true,      // Show Select/Deselect All button
-                showExpandCollapseAllButtons: true // Show Expand/Collapse All buttons
+                showExpandCollapseAllButtons: false // Show Expand/Collapse All buttons
             });
 
-            // Initialize Treeview 2: Single-Select, Expand/Collapse All Buttons, Custom Rendering
-            const tree2 = new Treeview({
-                containerId: 'myTreeview2',
+            // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering
+            const tree3 = new Treeview({
+                containerId: 'myTreeview3',
                 data: treeData,
                 searchEnabled: true,
                 initiallyExpanded: true,
                 multiSelectEnabled: false,
                 onSelectionChange: (selectedNodesData) => {
-                    outputArea.textContent = 'Selected Node (Tree 2):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
+                    outputArea.textContent = 'Selected Node (Tree 3):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
                     console.log('Selected Node (Tree 2):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
                 },
                 showSelectAllButton: false,      // No Select All button for single-select tree
