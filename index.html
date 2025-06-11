@@ -6,7 +6,7 @@
     <title>Quercus.js Demo</title>
 
     <link rel="stylesheet" href="src/treeview.css">
-
+    <link rel="icon" href="favicon.ico">
     <style>
         /* General page styling, distinct from treeview.css */
         body {
@@ -78,10 +78,22 @@
         .custom-treeview-wrapper .custom-node-status-inactive {
             color: #dc3545;
         }
+
+        .main-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-header h1 {
+            margin: 20px;
+        }
+
+
     </style>
 </head>
 <body>
-    <h1>Quercus.js - Live Demo</h1>
+    <div class="main-header"><img height="40px" src="logo.png"><h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
 
     <p class="section-header">Treeview 1: Multi-Select, All Buttons Enabled, Default Rendering</p>
     <div id="myTreeview1" class="my-treeview-container"></div>
