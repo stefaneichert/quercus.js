@@ -1,0 +1,33 @@
+{
+  "name": "quercus.js",
+  "version": "0.2.0",
+  "description": "A Lightweight and Customizable JavaScript Treeview Library with no dependencies.",
+  "main": "src/treeview.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefaneichert/quercus.js.git"
+  },
+  "files": [
+    "src/"
+  ],
+  "keywords": [
+    "treeview",
+    "javascript",
+    "js",
+    "dom",
+    "ui",
+    "component",
+    "data",
+    "visualization",
+    "tree"
+  ],
+  "author": "stefaneichert",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefaneichert/quercus.js/issues"
+  },
+  "homepage": "https://github.com/stefaneichert/quercus.js#readme"
+}
