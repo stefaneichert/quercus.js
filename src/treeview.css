@@ -2,8 +2,13 @@
 
 /* Base container for the treeview instance */
 .custom-treeview-wrapper {
+    background-color: #fff;
+    border: 1px solid #ddd;
     padding: 15px;
+    border-radius: 5px;
+    max-width: 600px;
     margin: 10px auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Search input specific to the library */
@@ -13,93 +18,107 @@
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; /* Include padding in width */
+    box-sizing: border-box;
     font-size: 0.9em;
 }
 
-/* Tree structure styling - all selectors use .custom-treeview-wrapper class */
+/* Tree structure styling */
 .custom-treeview-wrapper ul {
     list-style: none;
     padding-left: 20px; /* Indent children */
     margin: 0;
-    /* This rule applies to ALL ULs, but the height/overflow/transition below
-       will override it for *nested* ULs, making the root UL visible by default. */
 }
 
-.custom-treeview-wrapper li > ul {
-    height: 0; /* Default collapsed height for nested ULs */
-    overflow: hidden; /* Hide overflow during animation */
-    transition: height 0.3s ease-out; /* Smooth height transition */
+.custom-treeview-wrapper li > ul { /* Only nested ULs get collapse animation */
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease-out;
 }
 
 .custom-treeview-wrapper li {
     margin: 5px 0;
-    cursor: pointer;
-    line-height: 1.5;
-    white-space: nowrap;
-    overflow: hidden; /* Keep ellipsis working */
-    text-overflow: ellipsis;
     position: relative;
-    padding-left: 20px; /* Space for expand/collapse icon */
     font-size: 0.95em;
     color: #333;
+    cursor: default; /* Default cursor for the LI, actual clickables get specific cursors */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.custom-treeview-wrapper li:hover {
-    /*background-color: rgba(224, 224, 224, 1); uncomment if hover is desired*/
+/* Wrapper for expander icon and text (flexbox container) */
+.custom-treeview-wrapper .treeview-node-content {
+    display: flex; /* Use flexbox for icon and text alignment */
+    align-items: center; /* Vertically align icon and text */
+    padding-left: 0;
+    cursor: pointer; /* Cursor for the clickable node content */
+    user-select: none; /* Prevent text selection on node content */
+    padding: 2px 0; /* Small vertical padding for clickable area */
 }
 
-.custom-treeview-wrapper li.selected {
-    /*background-color: #cceeff;*/
-    font-weight: bold;
-    color: #0056b3; /* Darker text for selection */
+/* Style the actual text span for the node name */
+.custom-treeview-wrapper .treeview-node-text {
+    flex-grow: 1; /* Allow text to take remaining space */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Expand/collapse icon styling */
-.custom-treeview-wrapper li.has-children::before {
-    content: '+'; /* Plus sign for collapsed */
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 20px;
+
+/* Styling for the explicit expander icon element */
+.treeview-expander {
+    display: inline-block;
+    width: 20px; /* Space for the icon */
     text-align: center;
     color: #666;
     font-weight: bold;
+    cursor: pointer; /* Separate cursor for expander */
+    user-select: none;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    margin-right: 5px; /* Space between icon and text */
     transition: transform 0.2s ease-in-out; /* Smooth transition for icon */
 }
 
-.custom-treeview-wrapper li.expanded.has-children::before {
-    content: '-'; /* Minus sign for expanded */
+/* Styling for the placeholder span for leaf nodes */
+.treeview-expander-placeholder {
+    display: inline-block;
+    width: 20px; /* Same width as expander for consistent alignment */
+    flex-shrink: 0;
+    margin-right: 5px;
 }
 
-/* For search results - keep hidden with display: none for immediate effect */
+/* .custom-treeview-wrapper .treeview-node-content:hover { /* Hover on the content wrapper */
+/*    background-color: #e0e0e0; */
+/* } */
+
+.custom-treeview-wrapper li.selected > .treeview-node-content { /* Apply selected style to the content wrapper */
+    background-color: rgba(100, 149, 237, 0.22);
+    color: #0056b3;
+    border-radius: 3px;
+}
+
+
+/* For search results */
 .custom-treeview-wrapper li.hidden {
     display: none !important;
 }
 
-/* Highlight styling for ONLY the direct matching node */
-/* This rule applies directly to the <li> that has the 'highlight' class.*/
-.custom-treeview-wrapper li.highlight {
+/* Apply highlight to the node content wrapper */
+.custom-treeview-wrapper li.highlight > .treeview-node-content {
     font-style: italic;
-    color: #731717; /* Dark red */
+    color: #731717;
     border-radius: 3px;
-    padding-right: 5px;
 }
 
-/* KEY RULE: Reset styles for ALL descendant <li> elements of a highlighted <li> */
-/* This is crucial to prevent inheritance. It says:
-   "If a parent <li> is highlighted (i.e., has .highlight class),
-   then ensure *any* <li> that is a descendant of it (a child, grandchild, etc.)
-   is NOT italic or dark red, and has a transparent background."*/
+/* Reset styles for ALL descendant <li> elements of a highlighted <li> */
 .custom-treeview-wrapper li.highlight li {
-    font-style: normal; /* Override inherited italic */
-    color: #333; /* Reset to the default text color of the treeview */
-    background-color: transparent; /* Ensure no inherited background color */
+    font-style: normal;
+    color: #333;
+    background-color: transparent;
 }
 
-/* This rule ensures that if a nested LI is *also* a match (e.g., if both "Project" and "Project Alpha" match),
-   it still gets its own highlight. This is for robustness but is usually covered by the first rule. */
-.custom-treeview-wrapper li.highlight li.highlight {
+/* Ensure that if a nested LI is also a match, it still gets its own highlight. */
+.custom-treeview-wrapper li.highlight li.highlight > .treeview-node-content {
     font-style: italic;
     color: #731717;
 }

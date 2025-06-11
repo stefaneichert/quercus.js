@@ -1,84 +1,71 @@
 // treeview.js
 
 /**
- * Treeview Library
+ * Quercus.js: A Lightweight and Customizable JavaScript Treeview Library
  *
- * A simple, customizable treeview for displaying nested JSON data
- * with search and single-node selection functionality.
+ * Provides hierarchical data display with search, multi-node selection,
+ * and smooth expand/collapse animations. Expand/collapse is triggered
+ * by clicking on the dedicated icon (+/-), while selection/deselection
+ * happens by clicking on the node's text (multi-select enabled by config, no Ctrl/Cmd needed).
  */
-
 (function() { // Anonymous IIFE for encapsulation
 
     /**
      * Helper function to get the direct text content of an element,
-     * excluding the text from its child elements (like nested ULs).
-     * @param {HTMLElement} element The DOM element to get text from.
-     * @returns {string} The direct text content.
+     * specifically targeting the .treeview-node-text span.
+     * @param {HTMLElement} liElement The <li> DOM element representing the node.
+     * @returns {string} The direct text content of the node's name span.
      */
-    function getDirectTextContent(element) {
-        let text = '';
-        for (let i = 0; i < element.childNodes.length; i++) {
-            const node = element.childNodes[i];
-            // Only consider text nodes (nodeType 3)
-            if (node.nodeType === Node.TEXT_NODE) {
-                text += node.nodeValue;
-            }
-        }
-        return text.trim(); // Trim any leading/trailing whitespace
+    function getDirectTextContent(liElement) {
+        const nodeTextSpan = liElement.querySelector('.treeview-node-text');
+        return nodeTextSpan ? nodeTextSpan.textContent.trim() : '';
     }
 
     // Define the Treeview class
     class Treeview {
         constructor(options) {
             this.options = {
-                containerId: null, // ID of the DOM element to render the tree into
-                data: [],          // The JSON data for the tree
-                searchEnabled: true, // Whether to show the search input
-                initiallyExpanded: false, // Whether all nodes should be expanded on load
-                onNodeSelect: null // Callback function when a node is selected (receives node data)
+                containerId: null,
+                data: [],
+                searchEnabled: true,
+                initiallyExpanded: false,
+                multiSelectEnabled: false, // Overall flag for multi-selection capability
+                onSelectionChange: null
             };
-            Object.assign(this.options, options); // Merge user options
+            Object.assign(this.options, options);
 
             this.treeviewContainer = null;
             this.treeSearchInput = null;
-            this.selectedNodeElement = null; // Reference to the currently selected HTML <li> element
+            this.selectedNodes = new Set();
 
             this._initialize();
         }
 
         _initialize() {
             if (!this.options.containerId) {
-                console.error("Treeview: containerId is required.");
+                console.error("Quercus.js: containerId is required.");
                 return;
             }
 
             this.treeviewContainer = document.getElementById(this.options.containerId);
             if (!this.treeviewContainer) {
-                console.error(`Treeview: Element with ID '${this.options.containerId}' not found.`);
+                console.error(`Quercus.js: Element with ID '${this.options.containerId}' not found.`);
                 return;
             }
 
             this.treeviewContainer.classList.add('custom-treeview-wrapper');
 
-            this._createSearchInput();
+            this._createSearchBar();
             this._renderTree(this.options.data, this.treeviewContainer);
 
-            // If initially expanded, ensure all ULs have auto height
             if (this.options.initiallyExpanded) {
-                this.treeviewContainer.querySelectorAll('ul').forEach(ul => {
-                    ul.style.height = 'auto'; // Set auto height after initial render
-                });
-            }
-
-            // Event listener for search input
-            if (this.options.searchEnabled) {
-                this.treeSearchInput.addEventListener('input', (event) => {
-                    this._searchTree(event.target.value);
+                this.treeviewContainer.querySelectorAll('li.expanded > ul').forEach(ul => {
+                    ul.style.height = 'auto';
                 });
             }
         }
 
-        _createSearchInput() {
+        _createSearchBar() {
             if (this.options.searchEnabled) {
                 this.treeSearchInput = document.createElement('input');
                 this.treeSearchInput.type = 'text';
@@ -86,6 +73,10 @@
                 this.treeSearchInput.placeholder = 'Search tree...';
                 this.treeSearchInput.classList.add('treeview-search-input');
                 this.treeviewContainer.appendChild(this.treeSearchInput);
+
+                this.treeSearchInput.addEventListener('input', (event) => {
+                    this._searchTree(event.target.value);
+                });
             }
         }
 
@@ -96,51 +87,74 @@
 
             data.forEach(node => {
                 const li = document.createElement('li');
-                li.textContent = node.name;
                 li.dataset.id = node.id;
                 li.dataset.nodeData = JSON.stringify(node);
 
+                const nodeContentWrapper = document.createElement('div');
+                nodeContentWrapper.classList.add('treeview-node-content');
+
+                const nodeTextSpan = document.createElement('span');
+                nodeTextSpan.classList.add('treeview-node-text');
+                nodeTextSpan.textContent = node.name;
+
+
                 if (node.children && node.children.length > 0) {
                     li.classList.add('has-children');
+
+                    const expander = document.createElement('span');
+                    expander.classList.add('treeview-expander');
+                    expander.textContent = this.options.initiallyExpanded ? '-' : '+';
+
+                    nodeContentWrapper.appendChild(expander);
+                    nodeContentWrapper.appendChild(nodeTextSpan);
+                    li.appendChild(nodeContentWrapper);
+
                     if (this.options.initiallyExpanded) {
                         li.classList.add('expanded');
                     }
-                    this._renderTree(node.children, li); // Recursively render children
-                }
+                    this._renderTree(node.children, li);
 
-                // Event listener for expand/collapse and selection
-                li.addEventListener('click', (event) => {
-                    if (event.target === li) { // Only handle clicks directly on the li
-                        if (li.classList.contains('has-children')) {
-                            const childUl = li.querySelector('ul');
-                            if (childUl) { // Ensure childUl exists before manipulating
-                                if (li.classList.contains('expanded')) {
-                                    // Collapse
-                                    li.classList.remove('expanded');
-                                    childUl.style.height = `${childUl.scrollHeight}px`;
-                                    requestAnimationFrame(() => {
-                                        childUl.style.height = '0px';
-                                    });
-                                    childUl.addEventListener('transitionend', function handler() {
-                                        childUl.removeEventListener('transitionend', handler);
-                                        childUl.style.height = '';
-                                    }, { once: true });
-
-                                } else {
-                                    // Expand
-                                    li.classList.add('expanded');
+                    expander.addEventListener('click', (event) => {
+                        const childUl = li.querySelector('ul');
+                        if (childUl) {
+                            if (li.classList.contains('expanded')) {
+                                li.classList.remove('expanded');
+                                expander.textContent = '+';
+                                childUl.style.height = `${childUl.scrollHeight}px`;
+                                requestAnimationFrame(() => {
                                     childUl.style.height = '0px';
-                                    requestAnimationFrame(() => {
-                                        childUl.style.height = `${childUl.scrollHeight}px`;
-                                    });
-                                    childUl.addEventListener('transitionend', function handler() {
-                                        childUl.removeEventListener('transitionend', handler);
-                                        childUl.style.height = 'auto';
-                                    }, { once: true });
-                                }
+                                });
+                                childUl.addEventListener('transitionend', function handler() {
+                                    childUl.removeEventListener('transitionend', handler);
+                                    childUl.style.height = '';
+                                }, { once: true });
+                            } else {
+                                li.classList.add('expanded');
+                                expander.textContent = '-';
+                                childUl.style.height = '0px';
+                                requestAnimationFrame(() => {
+                                    childUl.style.height = `${childUl.scrollHeight}px`;
+                                });
+                                childUl.addEventListener('transitionend', function handler() {
+                                    childUl.removeEventListener('transitionend', handler);
+                                    childUl.style.height = 'auto';
+                                }, { once: true });
                             }
                         }
-                        this._selectNode(li);
+                        event.stopPropagation();
+                    });
+                } else {
+                    const placeholderExpander = document.createElement('span');
+                    placeholderExpander.classList.add('treeview-expander-placeholder');
+                    nodeContentWrapper.appendChild(placeholderExpander);
+                    nodeContentWrapper.appendChild(nodeTextSpan);
+                    li.appendChild(nodeContentWrapper);
+                }
+
+                // Event listener for selection (ONLY on the node content wrapper)
+                nodeContentWrapper.addEventListener('click', (event) => {
+                    if (!event.target.classList.contains('treeview-expander')) {
+                         this._selectNode(li);
                     }
                     event.stopPropagation();
                 });
@@ -149,22 +163,41 @@
             });
         }
 
-        // Function to handle node selection
+        // Function to handle node selection (always toggle if multiSelectEnabled)
         _selectNode(nodeElement) {
-            if (this.selectedNodeElement) {
-                this.selectedNodeElement.classList.remove('selected');
-            }
-            this.selectedNodeElement = nodeElement;
-            nodeElement.classList.add('selected');
-
-            if (typeof this.options.onNodeSelect === 'function') {
-                try {
-                    const nodeData = JSON.parse(nodeElement.dataset.nodeData);
-                    this.options.onNodeSelect(nodeData);
-                } catch (e) {
-                    console.error("Treeview: Error parsing node data:", e);
-                    this.options.onNodeSelect({ id: nodeElement.dataset.id, name: nodeElement.textContent.split('\n')[0].trim() });
+            if (this.options.multiSelectEnabled) {
+                if (this.selectedNodes.has(nodeElement)) {
+                    this.selectedNodes.delete(nodeElement);
+                    nodeElement.classList.remove('selected');
+                } else {
+                    this.selectedNodes.add(nodeElement);
+                    nodeElement.classList.add('selected');
                 }
+            } else {
+                const wasAlreadySolelySelected = this.selectedNodes.has(nodeElement) && this.selectedNodes.size === 1;
+
+                this.selectedNodes.forEach(node => node.classList.remove('selected'));
+                this.selectedNodes.clear();
+
+                if (!wasAlreadySolelySelected) {
+                    this.selectedNodes.add(nodeElement);
+                    nodeElement.classList.add('selected');
+                }
+            }
+            this._triggerSelectionChange();
+        }
+
+        _triggerSelectionChange() {
+            if (typeof this.options.onSelectionChange === 'function') {
+                const selectedData = Array.from(this.selectedNodes).map(nodeElement => {
+                    try {
+                        return JSON.parse(nodeElement.dataset.nodeData);
+                    } catch (e) {
+                        console.error("Quercus.js: Error parsing selected node data:", e);
+                        return { id: nodeElement.dataset.id, name: getDirectTextContent(nodeElement) };
+                    }
+                });
+                this.options.onSelectionChange(selectedData);
             }
         }
 
@@ -179,12 +212,14 @@
                     item.classList.remove('hidden', 'highlight');
                     if (item.classList.contains('has-children')) {
                         const childUl = item.querySelector('ul');
+                        const expander = item.querySelector('.treeview-expander');
                         if (childUl) {
                             childUl.style.height = `${childUl.scrollHeight}px`;
                             requestAnimationFrame(() => {
                                 childUl.style.height = '0px';
                             });
                             item.classList.remove('expanded');
+                            if (expander) expander.textContent = '+';
                             childUl.addEventListener('transitionend', function handler() {
                                 childUl.removeEventListener('transitionend', handler);
                                 childUl.style.height = '';
@@ -193,11 +228,13 @@
                     }
                 });
                 if (this.options.initiallyExpanded) {
-                     this.treeviewContainer.querySelectorAll('ul').forEach(ul => {
+                     this.treeviewContainer.querySelectorAll('li.has-children > ul').forEach(ul => {
                          ul.style.height = 'auto';
                          const parentLi = ul.closest('li');
                          if (parentLi) {
                              parentLi.classList.add('expanded');
+                             const expander = parentLi.querySelector('.treeview-expander');
+                             if (expander) expander.textContent = '-';
                          }
                      });
                 }
@@ -208,14 +245,16 @@
                 item.classList.remove('highlight');
                 item.classList.add('hidden');
                 const childUl = item.querySelector('ul');
+                const expander = item.querySelector('.treeview-expander');
                 if (childUl) {
                     childUl.style.height = '0px';
                     item.classList.remove('expanded');
+                    if (expander) expander.textContent = '+';
                 }
             });
 
             allListItems.forEach(item => {
-                const liText = getDirectTextContent(item);
+                const liText = getDirectTextContent(item); // Using the corrected helper
                 if (liText.toLowerCase().includes(searchTerm.toLowerCase())) {
                     matchingNodes.add(item);
                     item.classList.add('highlight');
@@ -243,9 +282,11 @@
                 ancestor.classList.remove('hidden');
                 ancestor.classList.add('expanded');
                 const childUl = ancestor.querySelector('ul');
+                const expander = ancestor.querySelector('.treeview-expander');
                 if (childUl) {
                     childUl.style.height = 'auto';
                 }
+                if (expander) expander.textContent = '-';
             });
         }
 
@@ -253,31 +294,30 @@
         setData(newData) {
             this.options.data = newData;
             this.treeviewContainer.innerHTML = '';
-            this.selectedNodeElement = null;
-            this._createSearchInput();
+            this.selectedNodes.clear();
+            this._createSearchBar();
             this._renderTree(this.options.data, this.treeviewContainer);
 
             if (this.options.initiallyExpanded) {
-                this.treeviewContainer.querySelectorAll('ul').forEach(ul => {
+                this.treeviewContainer.querySelectorAll('li.expanded > ul').forEach(ul => {
                     ul.style.height = 'auto';
                 });
             }
         }
 
-        // Public method to get the currently selected node data
-        getSelectedNode() {
-            if (this.selectedNodeElement && this.selectedNodeElement.dataset.nodeData) {
+        getSelectedNode() { return this.getSelectedNodes(); }
+        getSelectedNodes() {
+            const selectedData = Array.from(this.selectedNodes).map(nodeElement => {
                 try {
-                    return JSON.parse(this.selectedNodeElement.dataset.nodeData);
+                    return JSON.parse(nodeElement.dataset.nodeData);
                 } catch (e) {
-                    console.error("Treeview: Error parsing selected node data:", e);
-                    return { id: this.selectedNodeElement.dataset.id, name: nodeElement.textContent.split('\n')[0].trim() };
+                    console.error("Quercus.js: Error parsing selected node data:", e);
+                    return { id: nodeElement.dataset.id, name: getDirectTextContent(nodeElement) };
                 }
-            }
-            return null;
+            });
+            return selectedData;
         }
 
-        // Public method to perform a search programmatically
         search(searchTerm) {
             if (this.options.searchEnabled && this.treeSearchInput) {
                 this.treeSearchInput.value = searchTerm;
