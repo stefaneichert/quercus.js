@@ -55,15 +55,38 @@
             line-height: 1.4;
             font-size: 0.9em;
         }
+
+        /* Custom styles for the rendered nodes in Treeview 2 */
+        .custom-treeview-wrapper .custom-node-icon {
+            margin-right: 8px;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+        .custom-treeview-wrapper .custom-node-description {
+            font-size: 0.8em;
+            color: #6a737d;
+            margin-left: 10px;
+            font-style: italic;
+        }
+        .custom-treeview-wrapper .custom-node-name {
+            font-weight: 500; /* Slightly bolder name */
+        }
+        .custom-treeview-wrapper .custom-node-status-active {
+            color: #28a745; /* Green */
+            font-weight: bold;
+        }
+        .custom-treeview-wrapper .custom-node-status-inactive {
+            color: #dc3545; /* Red */
+        }
     </style>
 </head>
 <body>
     <h1>Quercus.js - Live Demo</h1>
 
-    <p class="section-header">Treeview 1: Multi-Select Enabled</p>
+    <p class="section-header">Treeview 1: Multi-Select Enabled (Default Rendering)</p>
     <div id="myTreeview1" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 2: Single-Select Only</p>
+    <p class="section-header">Treeview 2: Custom Node Rendering & Single-Select</p>
     <div id="myTreeview2" class="my-treeview-container"></div>
 
     <p class="section-header">Selected Node(s) Information:</p>
@@ -79,62 +102,113 @@
                 {
                     id: 'doc-root',
                     name: 'Documents',
+                    type: 'folder',
+                    status: 'active',
+                    description: 'All company documents'
+                },
+                {
+                    id: 'doc-work',
+                    name: 'Work',
+                    type: 'folder',
+                    status: 'active',
                     children: [
-                        {
-                            id: 'doc-work',
-                            name: 'Work',
-                            children: [
-                                { id: 'doc-alpha', name: 'Project Alpha' },
-                                { id: 'doc-beta', name: 'Project Beta' },
-                                { id: 'doc-notes', name: 'Meeting Notes' }
-                            ]
-                        },
-                        {
-                            id: 'doc-personal',
-                            name: 'Personal',
-                            children: [
-                                { id: 'doc-vacation', name: 'Vacation Photos' },
-                                { id: 'doc-resumes', name: 'Resumes' }
-                            ]
-                        },
-                        { id: 'doc-inbox', name: 'Inbox' }
+                        { id: 'doc-alpha', name: 'Project Alpha', type: 'file', status: 'active', size: '1.2MB' },
+                        { id: 'doc-beta', name: 'Project Beta', type: 'file', status: 'inactive', size: '0.8MB' },
+                        { id: 'doc-notes', name: 'Meeting Notes', type: 'file', status: 'active', lastModified: '2023-01-15' }
                     ]
                 },
                 {
-                    id: 'dl-root',
-                    name: 'Downloads',
+                    id: 'doc-personal',
+                    name: 'Personal',
+                    type: 'folder',
+                    status: 'active',
                     children: [
-                        { id: 'dl-software', name: 'Software' },
-                        { id: 'dl-archives', name: 'Archives' }
+                        { id: 'doc-vacation', name: 'Vacation Photos', type: 'image', status: 'active' },
+                        { id: 'doc-resumes', name: 'Resumes', type: 'file', status: 'active' }
                     ]
                 },
-                { id: 'music-root', name: 'Music' },
-                { id: 'videos-root', name: 'Videos' }
+                { id: 'doc-inbox', name: 'Inbox', type: 'folder', status: 'inactive' },
+                {
+                    id: 'dl-root',
+                    name: 'Downloads',
+                    type: 'folder',
+                    status: 'active',
+                    children: [
+                        { id: 'dl-software', name: 'Software', type: 'file', status: 'active' },
+                        { id: 'dl-archives', name: 'Archives', type: 'file', status: 'inactive' }
+                    ]
+                },
+                { id: 'music-root', name: 'Music', type: 'folder', status: 'active' },
+                { id: 'videos-root', name: 'Videos', type: 'folder', status: 'inactive' }
             ];
 
-            // Initialize Treeview 1: Multi-Select Enabled (No Ctrl/Cmd needed)
+            // Initialize Treeview 1: Multi-Select Enabled (Default Rendering)
             const tree1 = new Treeview({
                 containerId: 'myTreeview1',
                 data: treeData,
                 searchEnabled: true,
                 initiallyExpanded: false,
-                multiSelectEnabled: true, // Multi-select enabled by default on click
+                multiSelectEnabled: true,
                 onSelectionChange: (selectedNodesData) => {
                     outputArea.textContent = 'Selected Nodes (Tree 1):\n' + JSON.stringify(selectedNodesData, null, 2);
                     console.log('Selected Nodes (Tree 1):', selectedNodesData);
                 }
             });
 
-            // Initialize Treeview 2: Single-Select Only
+            // Initialize Treeview 2: Custom Node Rendering & Single-Select
             const tree2 = new Treeview({
                 containerId: 'myTreeview2',
-                data: treeData,
+                data: treeData, // Using the same data for demonstration
                 searchEnabled: true,
                 initiallyExpanded: true,
-                multiSelectEnabled: false, // Single-select only
+                multiSelectEnabled: false,
                 onSelectionChange: (selectedNodesData) => {
                     outputArea.textContent = 'Selected Node (Tree 2):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
                     console.log('Selected Node (Tree 2):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
+                },
+                // NEW: Custom Node Renderer
+                onRenderNode: (nodeData, nodeContentWrapperElement) => {
+                    // Clear existing content if any (important for setData calls)
+                    nodeContentWrapperElement.innerHTML = '';
+
+                    // Create an icon based on node type
+                    const iconSpan = document.createElement('span');
+                    iconSpan.classList.add('custom-node-icon');
+                    if (nodeData.type === 'folder') {
+                        iconSpan.textContent = '📁'; // Folder emoji
+                    } else if (nodeData.type === 'file') {
+                        iconSpan.textContent = '📄'; // File emoji
+                    } else if (nodeData.type === 'image') {
+                        iconSpan.textContent = '🖼️'; // Image emoji
+                    } else {
+                        iconSpan.textContent = '▪️'; // Default bullet
+                    }
+                    nodeContentWrapperElement.appendChild(iconSpan);
+
+                    // Create a span for the node name
+                    const nameSpan = document.createElement('span');
+                    nameSpan.classList.add('treeview-node-text', 'custom-node-name'); // Keep treeview-node-text for search
+                    nameSpan.textContent = nodeData.name;
+                    nodeContentWrapperElement.appendChild(nameSpan);
+
+                    // Add a description/status if available
+                    if (nodeData.description) {
+                        const descSpan = document.createElement('span');
+                        descSpan.classList.add('custom-node-description');
+                        descSpan.textContent = ` (${nodeData.description})`;
+                        nodeContentWrapperElement.appendChild(descSpan);
+                    } else if (nodeData.status) {
+                        const statusSpan = document.createElement('span');
+                        statusSpan.classList.add('custom-node-description');
+                        statusSpan.textContent = ` [${nodeData.status}]`;
+                        statusSpan.classList.add(nodeData.status === 'active' ? 'custom-node-status-active' : 'custom-node-status-inactive');
+                        nodeContentWrapperElement.appendChild(statusSpan);
+                    } else if (nodeData.size) {
+                        const sizeSpan = document.createElement('span');
+                        sizeSpan.classList.add('custom-node-description');
+                        sizeSpan.textContent = ` (${nodeData.size})`;
+                        nodeContentWrapperElement.appendChild(sizeSpan);
+                    }
                 }
             });
         });

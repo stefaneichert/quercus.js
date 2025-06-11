@@ -138,6 +138,8 @@ const tree2 = new Treeview({
 | `initiallyExpanded` | `boolean`     | `false`     | If `true`, all nodes will be expanded on initial load.                                                                                                                                                                                                                                                        |
 | `multiSelectEnabled` | `boolean`    | `false`     | If `true`, clicking a node's text will toggle its selection (add to or remove from selection). If `false`, clicking a node will deselect all other nodes and select only the clicked one.                                                                                                                           |
 | `onSelectionChange` | `function`    | `null`      | A callback function executed whenever the selected node(s) change. It receives an `Array<Object>` of all currently selected node data objects. If `multiSelectEnabled` is `false`, this array will contain at most one object. |
+| `onRenderNode` | `function`    | `null`      | A callback function for custom node rendering. It receives `nodeData` (the node's data object) and `nodeContentWrapperElement` (the `div` to populate). See "Custom Node Rendering" section below.|
+
 
 ---
 
@@ -163,9 +165,72 @@ You can interact with your `Treeview` instance after it's been initialized:
     ```javascript
     tree1.search('Q1'); // Will highlight 'Q1 Sales' and expand its parents
     ```
-
-
 ---
+### Custom Node Rendering (`onRenderNode`)
+
+Quercus.js allows you to fully customize the HTML content of each node by providing an `onRenderNode` callback function in the `Treeview` options. This is useful for adding icons, status indicators, additional data, or any complex HTML structure to your nodes.
+
+**Callback Signature:**
+```javascript
+onRenderNode: (nodeData, nodeContentWrapperElement) => { /* ... populate nodeContentWrapperElement ... */ }
+```
+* `nodeData`: The full data object for the current node (as provided in your `data` array).
+* `nodeContentWrapperElement`: The `div` DOM element (`.treeview-node-content`) that will contain your custom HTML. You should append your custom elements to this wrapper.
+
+**Important Considerations:**
+
+* **Clearing Content:** If using `setData` to update the tree, ensure you clear the `nodeContentWrapperElement.innerHTML` at the beginning of your `onRenderNode` function to prevent duplicate content.
+* **Search Functionality:** To ensure search continues to work correctly with your custom rendering, make sure the `span` element that contains the primary searchable text (usually `nodeData.name`) also has the class `treeview-node-text`.
+* **Expander Icon:** The expander icon (`+`/`-`) is automatically prepended by Quercus.js to the `nodeContentWrapperElement` if the node has children. You don't need to add it in your custom renderer.
+
+**Example Usage (from `demo/index.html`):**
+
+This example demonstrates adding an emoji icon and a description/status based on custom `type` and `status` properties in your node data.
+
+```javascript
+onRenderNode: (nodeData, nodeContentWrapperElement) => {
+    // Clear existing content if any (important for setData calls)
+    nodeContentWrapperElement.innerHTML = '';
+
+    // Create an icon based on node type
+    const iconSpan = document.createElement('span');
+    iconSpan.classList.add('custom-node-icon'); // Apply custom CSS class for styling
+    if (nodeData.type === 'folder') {
+        iconSpan.textContent = '📁';
+    } else if (nodeData.type === 'file') {
+        iconSpan.textContent = '📄';
+    } else if (nodeData.type === 'image') {
+        iconSpan.textContent = '🖼️';
+    } else {
+        iconSpan.textContent = '▪️';
+    }
+    nodeContentWrapperElement.appendChild(iconSpan);
+
+    // Create a span for the node name
+    const nameSpan = document.createElement('span');
+    nameSpan.classList.add('treeview-node-text', 'custom-node-name'); // Keep treeview-node-text for search
+    nameSpan.textContent = nodeData.name;
+    nodeContentWrapperElement.appendChild(nameSpan);
+
+    // Add a description/status if available
+    if (nodeData.description) {
+        const descSpan = document.createElement('span');
+        descSpan.classList.add('custom-node-description');
+        descSpan.textContent = ` (${nodeData.description})`;
+        nodeContentWrapperElement.appendChild(descSpan);
+    } else if (nodeData.status) {
+        const statusSpan = document.createElement('span');
+        statusSpan.classList.add('custom-node-description');
+        statusSpan.textContent = ` [${nodeData.status}]`;
+        statusSpan.classList.add(nodeData.status === 'active' ? 'custom-node-status-active' : 'custom-node-status-inactive');
+        nodeContentWrapperElement.appendChild(statusSpan);
+    } else if (nodeData.size) {
+        const sizeSpan = document.createElement('span');
+        sizeSpan.classList.add('custom-node-description');
+        sizeSpan.textContent = ` (${nodeData.size})`;
+        nodeContentWrapperElement.appendChild(sizeSpan);
+    }
+}```
 
 ## Styling
 
