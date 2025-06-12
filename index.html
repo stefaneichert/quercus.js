@@ -210,7 +210,7 @@
             onSelectionChange: (selectedNodes) => {
                 const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output2').textContent =
-                    `Selected (Tree 2):[${names.join(', ')}]`;
+                    `Selected (Tree 2):\n[${names.join(', ')}]`;
             },
             showSelectAllButton: true,
             showExpandCollapseAllButtons: false
@@ -228,7 +228,7 @@
             onSelectionChange: (selectedNodes) => {
                 const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output3').textContent =
-                    `Selected (Tree 3):[${names.join(', ')}]`;
+                    `Selected (Tree 3):\n[${names.join(', ')}]`;
             },
             showSelectAllButton: false,
             showExpandCollapseAllButtons: true,
@@ -287,7 +287,7 @@
             onSelectionChange: (selectedNodes) => {
                 const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output4').textContent =
-                    `Selected (Tree 4):[${names.join(', ')}]`;
+                    `Selected (Tree 4):\n[${names.join(', ')}]`;
             }
         });
         document.getElementById('output4').textContent = 'Selected (Tree 4):';
@@ -306,7 +306,7 @@
             onSelectionChange: (selectedNodes) => {
                 const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output5').textContent =
-                    `Selected (Tree 5):[${names.join(', ')}]`;
+                    `Selected (Tree 5):\n[${names.join(', ')}]`;
             }
         });
         document.getElementById('output5').textContent = 'Selected (Tree 5):';
