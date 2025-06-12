@@ -171,80 +171,80 @@ const tree2 = new Treeview({
 
 ```mermaid
 graph TD
-    A[Treeview Instantiated] --> B{Options.containerId provided?};
-    B -- No --> A_FAIL[Error: containerId missing];
-    B -- Yes --> C[Initialize Container & Controls];
+    A[Treeview Instantiated] --> B{Options.containerId provided?}
+    B -- No --> A_FAIL[Error: containerId missing]
+    B -- Yes --> C[Initialize Container & Controls]
 
-    C --> D{Options.searchEnabled?};
-    D -- Yes --> D1[Render Search Input];
-    D -- No --> D2[Skip Search Input];
+    C --> D{Options.searchEnabled?}
+    D -- Yes --> D1[Render Search Input]
+    D -- No --> D2[Skip Search Input]
 
-    C --> E{Options.showSelectAllButton AND<br>Options.multiSelectEnabled AND<br>Options.nodeSelectionEnabled AND<br>NOT Options.cascadeSelectChildren?};
-    E -- Yes --> E1[Render SelectAll Button];
-    E1 --> E_HANDLER[Attach _toggleSelectAll Handler];
-    E -- No --> E2[Skip SelectAll Button];
+    C --> E{Options.showSelectAllButton AND<br>Options.multiSelectEnabled AND<br>Options.nodeSelectionEnabled AND<br>NOT Options.cascadeSelectChildren?}
+    E -- Yes --> E1[Render SelectAll Button]
+    E1 --> E_HANDLER[Attach _toggleSelectAll Handler]
+    E -- No --> E2[Skip SelectAll Button]
 
-    C --> F{Options.showExpandCollapseAllButtons?};
-    F -- Yes --> F1[Render Expand/Collapse All Buttons];
-    F1 --> F_HANDLER[Attach _expandAll & _collapseAll Handlers];
-    F -- No --> F2[Skip Expand/Collapse All Buttons];
+    C --> F{Options.showExpandCollapseAllButtons?}
+    F -- Yes --> F1[Render Expand/Collapse All Buttons]
+    F1 --> F_HANDLER[Attach _expandAll & _collapseAll Handlers]
+    F -- No --> F2[Skip Expand/Collapse All Buttons]
 
-    C --> G[Render Tree Nodes (_renderTree)];
+    C --> G[Render Tree Nodes (_renderTree)]
 
     subgraph Node Rendering Loop (per node)
-        G --> G1[Create <li> and nodeContentWrapper];
-        G1 --> G2{Options.onRenderNode function?};
-        G2 -- Yes --> G3[Call onRenderNode to populate wrapper];
-        G2 -- No --> G4[Add default node text to wrapper];
+        G --> G1[Create <li> and nodeContentWrapper]
+        G1 --> G2{Options.onRenderNode function?}
+        G2 -- Yes --> G3[Call onRenderNode to populate wrapper]
+        G2 -- No --> G4[Add default node text to wrapper]
 
-        G3 --> G5[Prepend Expander/Placeholder to wrapper];
-        G4 --> G5;
+        G3 --> G5[Prepend Expander/Placeholder to wrapper]
+        G4 --> G5
 
-        G5 --> H{Options.checkboxSelectionEnabled?};
-        H -- Yes --> H1[Create Checkbox];
-        H1 --> H2[Insert Checkbox after Expander/Placeholder];
-        H2 --> H3[Attach Checkbox 'change' handler to _selectNode];
-        H -- No --> H4[Skip Checkbox];
+        G5 --> H{Options.checkboxSelectionEnabled?}
+        H -- Yes --> H1[Create Checkbox]
+        H1 --> H2[Insert Checkbox after Expander/Placeholder]
+        H2 --> H3[Attach Checkbox 'change' handler to _selectNode]
+        H -- No --> H4[Skip Checkbox]
 
-        H3 --> I[Append wrapper to <li>];
-        H4 --> I;
+        H3 --> I[Append wrapper to <li>]
+        H4 --> I
 
-        I --> J{Node has children?};
-        J -- Yes --> J1[Recursively call _renderTree for children];
-        J1 --> J2[Attach Expander click handler];
-        J -- No --> J3[No children];
+        I --> J{Node has children?}
+        J -- Yes --> J1[Recursively call _renderTree for children]
+        J1 --> J2[Attach Expander click handler]
+        J -- No --> J3[No children]
 
-        J2 --> K{Options.nodeSelectionEnabled AND<br>NOT Options.checkboxSelectionEnabled?};
-        J3 --> K;
+        J2 --> K{Options.nodeSelectionEnabled AND<br>NOT Options.checkboxSelectionEnabled?}
+        J3 --> K
 
-        K -- Yes --> K1[Attach nodeContentWrapper click handler (to _selectNode)];
-        K -- No --> K2[Do not attach click handler (selection via checkbox/disabled)];
-        K1 --> L[Node Rendered];
-        K2 --> L;
+        K -- Yes --> K1[Attach nodeContentWrapper click handler (to _selectNode)]
+        K -- No --> K2[Do not attach click handler (selection via checkbox/disabled)]
+        K1 --> L[Node Rendered]
+        K2 --> L
     end
 
     subgraph _selectNode(nodeElement, isSelected)
-        M[Call _selectNode] --> M1{Options.nodeSelectionEnabled?};
-        M1 -- No --> M_WARN[Warn: Selection disabled];
-        M1 -- Yes --> N{Options.multiSelectEnabled?};
+        M[Call _selectNode] --> M1{Options.nodeSelectionEnabled?}
+        M1 -- No --> M_WARN[Warn: Selection disabled]
+        M1 -- Yes --> N{Options.multiSelectEnabled?}
 
-        N -- Yes (Multi-Select) --> O{isSelected?};
-        O -- Yes --> O1[Add node to selectedNodes; Add 'selected' class; Check checkbox if present];
-        O -- No --> O2[Remove node from selectedNodes; Remove 'selected' class; Uncheck checkbox if present];
-        O1 --> P[Trigger onSelectionChange];
-        O2 --> P;
+        N -- Yes (Multi-Select) --> O{isSelected?}
+        O -- Yes --> O1[Add node to selectedNodes; Add 'selected' class; Check checkbox if present]
+        O -- No --> O2[Remove node from selectedNodes; Remove 'selected' class; Uncheck checkbox if present]
+        O1 --> P[Trigger onSelectionChange]
+        O2 --> P
 
-        N -- No (Single-Select) --> Q[Clear all previous selections & uncheck all checkboxes];
-        Q --> R{isSelected?};
-        R -- Yes --> R1[Add node to selectedNodes; Add 'selected' class; Check checkbox if present];
-        R1 --> S{Options.cascadeSelectChildren?};
-        S -- Yes --> S1[Find all descendants];
-        S1 --> S2[Add descendants to selectedNodes; Add 'selected' class; Check checkboxes if present];
-        S2 --> P;
-        S -- No --> P;
-        R -- No --> P;
+        N -- No (Single-Select) --> Q[Clear all previous selections & uncheck all checkboxes]
+        Q --> R{isSelected?}
+        R -- Yes --> R1[Add node to selectedNodes; Add 'selected' class; Check checkbox if present]
+        R1 --> S{Options.cascadeSelectChildren?}
+        S -- Yes --> S1[Find all descendants]
+        S1 --> S2[Add descendants to selectedNodes; Add 'selected' class; Check checkboxes if present]
+        S2 --> P
+        S -- No --> P
+        R -- No --> P
     end
-    
+
 ```
 
 ## Public Methods
