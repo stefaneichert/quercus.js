@@ -1,0 +1,89 @@
+graph TD
+    A[Treeview Instantiated] --> B{Options.containerId provided?}
+    B -- No --> A_FAIL[Error: containerId missing]
+    B -- Yes --> C[Initialize Container and Controls]
+
+    C --> D{Options.searchEnabled?}
+    D -- Yes --> D1[Render Search Input]
+    D -- No --> D2[Skip Search Input]
+
+    C --> E{showSelectAllButton AND<br>multiSelectEnabled AND<br>nodeSelectionEnabled AND<br>NOT cascadeSelectChildren?}
+    E -- Yes --> E1[Render SelectAll Button]
+    E1 --> E_HANDLER[Attach toggleSelectAll Handler]
+    E -- No --> E2[Skip SelectAll Button]
+
+    C --> F{showExpandCollapseAllButtons?}
+    F -- Yes --> F1[Render Expand/Collapse All Buttons]
+    F1 --> F_HANDLER[Attach expandAll and collapseAll Handlers]
+    F -- No --> F2[Skip Expand/Collapse All Buttons]
+
+    C --> G["Render Tree Nodes (renderTree)"]
+
+    subgraph RenderLoop [Node Rendering Loop per node]
+        G1[Create <li> and wrapper]
+        G2{onRenderNode function?}
+        G3[Call onRenderNode to populate wrapper]
+        G4[Add default node text]
+        G5[Prepend Expander or Placeholder]
+        H{checkboxSelectionEnabled?}
+        H1[Create Checkbox]
+        H2[Insert Checkbox]
+        H3[Attach Checkbox handler]
+        H4[Skip Checkbox]
+        I[Append wrapper to <li>]
+        J{Node has children?}
+        J1[Call renderTree for children]
+        J2[Attach Expander handler]
+        J3[No children]
+        K{nodeSelectionEnabled AND NOT checkboxSelectionEnabled?}
+        K1[Attach click handler to wrapper]
+        K2[Skip click handler]
+        L[Node Rendered]
+
+        G --> G1 --> G2
+        G2 -- Yes --> G3 --> G5
+        G2 -- No --> G4 --> G5
+
+        G5 --> H
+        H -- Yes --> H1 --> H2 --> H3 --> I
+        H -- No --> H4 --> I
+
+        I --> J
+        J -- Yes --> J1 --> J2 --> K
+        J -- No --> J3 --> K
+
+        K -- Yes --> K1 --> L
+        K -- No --> K2 --> L
+    end
+
+    subgraph SelectNode ["selectNode(nodeElement, isSelected)"]
+        M[Call selectNode]
+        M1{nodeSelectionEnabled?}
+        M_WARN[Selection disabled]
+        N{multiSelectEnabled?}
+        O{isSelected?}
+        O1[Add node to selectedNodes]
+        O2[Remove node from selectedNodes]
+        P[Trigger onSelectionChange]
+
+        Q[Clear previous selections]
+        R{isSelected?}
+        R1[Add node to selectedNodes]
+        S{cascadeSelectChildren?}
+        S1[Find all descendants]
+        S2[Select descendants]
+
+        M --> M1
+        M1 -- No --> M_WARN
+        M1 -- Yes --> N
+
+        N -- Yes --> O
+        O -- Yes --> O1 --> P
+        O -- No --> O2 --> P
+
+        N -- No --> Q --> R
+        R -- Yes --> R1 --> S
+        S -- Yes --> S1 --> S2 --> P
+        S -- No --> P
+        R -- No --> P
+    end
