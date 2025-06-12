@@ -207,11 +207,12 @@
             searchEnabled: true,
             initiallyExpanded: false,
             multiSelectEnabled: true,
-            onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => `"${n.name}"`);
-                document.getElementById('output2').textContent =
-                    `Selected (Tree 2):\n[${names.join(', ')}]`;
-            },
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const output = document.getElementById('output2');
+
+            output.textContent = `Selected (Tree 2):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
+          },
             showSelectAllButton: true,
             showExpandCollapseAllButtons: false
         });
@@ -225,11 +226,12 @@
             searchEnabled: true,
             initiallyExpanded: true,
             multiSelectEnabled: false,
-            onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => `"${n.name}"`);
-                document.getElementById('output3').textContent =
-                    `Selected (Tree 3):\n[${names.join(', ')}]`;
-            },
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const output = document.getElementById('output3');
+
+            output.textContent = `Selected (Tree 3):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
+          },
             showSelectAllButton: false,
             showExpandCollapseAllButtons: true,
             onRenderNode: (nodeData, nodeContentWrapperElement) => {
@@ -284,11 +286,12 @@
             multiSelectEnabled: false, // Must be false for cascadeSelectChildren to apply as per your request
             nodeSelectionEnabled: true, // Ensure node selection is enabled
             cascadeSelectChildren: true, // Enable cascading selection
-            onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => `"${n.name}"`);
-                document.getElementById('output4').textContent =
-                    `Selected (Tree 4):\n[${names.join(', ')}]`;
-            }
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const output = document.getElementById('output4');
+
+            output.textContent = `Selected (Tree 4):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
+          }
         });
         document.getElementById('output4').textContent = 'Selected (Tree 4):';
 
@@ -303,11 +306,12 @@
             nodeSelectionEnabled: true, // Must be true for checkboxes to work
             checkboxSelectionEnabled: true, // Enable checkbox selection
             showSelectAllButton: true, // Select All button now applies to checkboxes
-            onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => `"${n.name}"`);
-                document.getElementById('output5').textContent =
-                    `Selected (Tree 5):\n[${names.join(', ')}]`;
-            }
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const output = document.getElementById('output5');
+
+            output.textContent = `Selected (Tree 5):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
+          }
         });
         document.getElementById('output5').textContent = 'Selected (Tree 5):';
 
