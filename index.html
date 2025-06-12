@@ -208,9 +208,9 @@
             initiallyExpanded: false,
             multiSelectEnabled: true,
             onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => n.name);
+                const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output2').textContent =
-                    `Selected (Tree 2):\n${names.join('\n')}`;
+                    `Selected (Tree 2):[${names.join(', ')}]`;
             },
             showSelectAllButton: true,
             showExpandCollapseAllButtons: false
@@ -226,9 +226,9 @@
             initiallyExpanded: true,
             multiSelectEnabled: false,
             onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => n.name);
+                const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output3').textContent =
-                    `Selected (Tree 3):\n${names.join('\n')}`;
+                    `Selected (Tree 3):[${names.join(', ')}]`;
             },
             showSelectAllButton: false,
             showExpandCollapseAllButtons: true,
@@ -285,9 +285,9 @@
             nodeSelectionEnabled: true, // Ensure node selection is enabled
             cascadeSelectChildren: true, // Enable cascading selection
             onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => n.name);
+                const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output4').textContent =
-                    `Selected (Tree 4):\n${names.join('\n')}`;
+                    `Selected (Tree 4):[${names.join(', ')}]`;
             }
         });
         document.getElementById('output4').textContent = 'Selected (Tree 4):';
@@ -304,9 +304,9 @@
             checkboxSelectionEnabled: true, // Enable checkbox selection
             showSelectAllButton: true, // Select All button now applies to checkboxes
             onSelectionChange: (selectedNodes) => {
-                const names = selectedNodes.map(n => n.name);
+                const names = selectedNodes.map(n => `"${n.name}"`);
                 document.getElementById('output5').textContent =
-                    `Selected (Tree 5):\n${names.join('\n')}`;
+                    `Selected (Tree 5):[${names.join(', ')}]`;
             }
         });
         document.getElementById('output5').textContent = 'Selected (Tree 5):';
