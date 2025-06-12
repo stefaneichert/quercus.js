@@ -12,6 +12,7 @@
  * Custom Node Rendering via onRenderNode callback.
  * Option to disable node selection.
  * Option to cascade selection to children when a parent is selected (only if multiSelectEnabled is false).
+ * Option to display checkboxes for node selection, positioned between expander and label.
  */
 (function() { // Anonymous IIFE for encapsulation
 
@@ -45,7 +46,8 @@
                 showSelectAllButton: false,
                 showExpandCollapseAllButtons: false,
                 nodeSelectionEnabled: true,
-                cascadeSelectChildren: false // Option to cascade selection to children
+                cascadeSelectChildren: false, // Option to cascade selection to children
+                checkboxSelectionEnabled: false // Option to enable/disable checkbox display and control
             };
             Object.assign(this.options, options);
 
@@ -125,8 +127,8 @@
             const buttonContainer = document.createElement('div');
             buttonContainer.classList.add('treeview-button-container');
 
-            // Select All button only makes sense if multi-select is enabled AND node selection is enabled
-            if (this.options.showSelectAllButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled) {
+            // Select All button now shows if multi-select and node selection are enabled, AND cascadeSelectChildren is NOT enabled
+            if (this.options.showSelectAllButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled && !this.options.cascadeSelectChildren) {
                 this.selectAllButton = document.createElement('button');
                 this.selectAllButton.classList.add('treeview-control-button', 'treeview-select-all');
                 this.selectAllButton.textContent = 'Select All';
@@ -156,36 +158,50 @@
             }
         }
 
-        // Toggle Select All / Deselect All logic
+        // Toggle Select All / Deselect All logic (UPDATED for checkboxes)
         _toggleSelectAll() {
-            // Only proceed if node selection is enabled
             if (!this.options.nodeSelectionEnabled) {
                 console.warn("Quercus.js: Node selection is disabled, cannot select/deselect all nodes.");
+                return;
+            }
+            if (!this.options.multiSelectEnabled) {
+                console.warn("Quercus.js: Select All/Deselect All requires multi-select to be enabled.");
+                return;
+            }
+            // Defensive check for cascadeSelectChildren: This button should not be active if cascade selection is on.
+            if (this.options.cascadeSelectChildren) {
+                console.warn("Quercus.js: Select All/Deselect All is not applicable when cascadeSelectChildren is enabled.");
                 return;
             }
 
             const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
             const currentlySelectedCount = this.selectedNodes.size;
+            const shouldSelectAll = (currentlySelectedCount === 0 || currentlySelectedCount < allSelectableNodes.length);
 
-            if (currentlySelectedCount === allSelectableNodes.length) {
-                // All are selected, so deselect all
-                this.selectedNodes.forEach(node => node.classList.remove('selected'));
-                this.selectedNodes.clear();
-                if (this.selectAllButton) this.selectAllButton.textContent = 'Select All';
-            } else {
-                // Not all are selected, so select all
-                allSelectableNodes.forEach(li => {
+            allSelectableNodes.forEach(li => {
+                const checkbox = li.querySelector('.treeview-checkbox'); // Get checkbox if it exists
+                if (shouldSelectAll) { // If we should select all
                     if (!this.selectedNodes.has(li)) { // Only add if not already in set
                         this.selectedNodes.add(li);
                         li.classList.add('selected');
+                        if (checkbox) checkbox.checked = true; // Check checkbox if present
                     }
-                });
-                if (this.selectAllButton) this.selectAllButton.textContent = 'Deselect All';
+                } else { // If we should deselect all
+                    if (this.selectedNodes.has(li)) { // Only remove if currently in set
+                        this.selectedNodes.delete(li);
+                        li.classList.remove('selected');
+                        if (checkbox) checkbox.checked = false; // Uncheck checkbox if present
+                    }
+                }
+            });
+
+            if (this.selectAllButton) {
+                 this.selectAllButton.textContent = shouldSelectAll ? 'Deselect All' : 'Select All';
             }
             this._triggerSelectionChange();
         }
 
-        // Expand All logic
+        // Expand All logic (UPDATED for smooth animation)
         _expandAll() {
             const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
             allExpandableNodes.forEach(li => {
@@ -250,12 +266,17 @@
                 const nodeContentWrapper = document.createElement('div');
                 nodeContentWrapper.classList.add('treeview-node-content');
 
+                // NEW ORDER:
+                // 1. Create and add the node's main content (text or custom rendering) first
                 if (typeof this.options.onRenderNode === 'function') {
                     try {
                          this.options.onRenderNode(node, nodeContentWrapper);
                     } catch (e) {
                          console.error("Quercus.js: Error in custom node renderer:", e);
-                         nodeContentWrapper.textContent = node.name; // Fallback
+                         const nodeTextSpan = document.createElement('span'); // Fallback to default text
+                         nodeTextSpan.classList.add('treeview-node-text');
+                         nodeTextSpan.textContent = node.name;
+                         nodeContentWrapper.appendChild(nodeTextSpan);
                     }
                 } else {
                     const nodeTextSpan = document.createElement('span');
@@ -264,28 +285,55 @@
                     nodeContentWrapper.appendChild(nodeTextSpan);
                 }
 
-
+                // 2. Create expander/placeholder and prepend it
+                let expanderOrPlaceholder;
                 if (node.children && node.children.length > 0) {
                     li.classList.add('has-children');
+                    expanderOrPlaceholder = document.createElement('span');
+                    expanderOrPlaceholder.classList.add('treeview-expander');
+                    expanderOrPlaceholder.textContent = this.options.initiallyExpanded ? '-' : '+';
+                } else {
+                    expanderOrPlaceholder = document.createElement('span');
+                    expanderOrPlaceholder.classList.add('treeview-expander-placeholder');
+                }
+                nodeContentWrapper.prepend(expanderOrPlaceholder); // Prepend so it's always first
 
-                    const expander = document.createElement('span');
-                    expander.classList.add('treeview-expander');
-                    expander.textContent = this.options.initiallyExpanded ? '-' : '+';
 
-                    nodeContentWrapper.prepend(expander);
-                    li.appendChild(nodeContentWrapper);
+                // 3. Add checkbox if enabled, right after the expander/placeholder
+                if (this.options.checkboxSelectionEnabled) {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.classList.add('treeview-checkbox');
+                    checkbox.id = `checkbox-${node.id}`; // Give it an ID for potential <label for> later
+                    // Initial state of checkbox based on selection (if any previously, e.g., on setData)
+                    if (this.selectedNodes.has(li)) {
+                        checkbox.checked = true;
+                    }
 
+                    checkbox.addEventListener('change', (event) => {
+                        // Pass the <li> element and the checkbox state to _selectNode
+                        this._selectNode(li, event.target.checked);
+                    });
+                    // Insert checkbox right after the expander/placeholder
+                    nodeContentWrapper.insertBefore(checkbox, expanderOrPlaceholder.nextSibling);
+                }
+
+
+                li.appendChild(nodeContentWrapper); // Append the wrapper to the list item
+
+                // Recursively render children if they exist
+                if (node.children && node.children.length > 0) {
                     if (this.options.initiallyExpanded) {
                         li.classList.add('expanded');
                     }
                     this._renderTree(node.children, li);
 
-                    expander.addEventListener('click', (event) => {
+                    expanderOrPlaceholder.addEventListener('click', (event) => {
                         const childUl = li.querySelector('ul');
                         if (childUl) {
                             if (li.classList.contains('expanded')) {
                                 li.classList.remove('expanded');
-                                expander.textContent = '+';
+                                expanderOrPlaceholder.textContent = '+';
                                 childUl.style.height = `${childUl.scrollHeight}px`;
                                 requestAnimationFrame(() => {
                                     childUl.style.height = '0px';
@@ -296,7 +344,7 @@
                                 }, { once: true });
                             } else {
                                 li.classList.add('expanded');
-                                expander.textContent = '-';
+                                expanderOrPlaceholder.textContent = '-';
                                 childUl.style.height = '0px';
                                 requestAnimationFrame(() => {
                                     childUl.style.height = `${childUl.scrollHeight}px`;
@@ -309,64 +357,91 @@
                         }
                         event.stopPropagation();
                     });
-                } else {
-                    const placeholderExpander = document.createElement('span');
-                    placeholderExpander.classList.add('treeview-expander-placeholder');
-                    nodeContentWrapper.prepend(placeholderExpander);
-                    li.appendChild(nodeContentWrapper);
                 }
 
-                // IMPORTANT: Only attach selection listener if nodeSelectionEnabled is true
-                if (this.options.nodeSelectionEnabled) {
+
+                // IMPORTANT: Only attach selection listener for node text if nodeSelectionEnabled is true AND checkboxSelectionEnabled is FALSE
+                // If checkboxes are enabled, selection is controlled by the checkbox itself.
+                if (this.options.nodeSelectionEnabled && !this.options.checkboxSelectionEnabled) {
                     nodeContentWrapper.addEventListener('click', (event) => {
                         // Prevent selection when clicking the expander
                         if (!event.target.classList.contains('treeview-expander')) {
-                             this._selectNode(li);
+                             this._selectNode(li, !li.classList.contains('selected')); // Pass current selection state for toggle
                         }
                         event.stopPropagation();
                     });
-                } else {
-                    // Optional: Change cursor if selection is disabled
+                } else if (!this.options.nodeSelectionEnabled) {
+                    // Optional: Change cursor if selection is disabled (no checkboxes, no text selection)
                     nodeContentWrapper.style.cursor = 'default';
                 }
+                // If checkboxSelectionEnabled is true, cursor can remain 'pointer' as checkboxes are clickable.
 
                 ul.appendChild(li);
             });
         }
 
-        _selectNode(nodeElement) {
+        /**
+         * Selects or deselects a node.
+         * @param {HTMLElement} nodeElement The <li> DOM element of the node.
+         * @param {boolean} [isSelected=true] Optional. The desired selection state. If not provided, it toggles (multi-select) or sets to true (single-select).
+         * This parameter is particularly useful when called from a checkbox change event.
+         */
+        _selectNode(nodeElement, isSelected = null) {
             // Defensive check if selection is disabled (though event listener handles primary control)
             if (!this.options.nodeSelectionEnabled) {
                 console.warn("Quercus.js: Attempted to select a node while selection is disabled.");
                 return;
             }
 
+            const checkbox = nodeElement.querySelector('.treeview-checkbox');
+
+            // Determine effective `isSelected` state if not explicitly passed
+            if (isSelected === null) {
+                isSelected = !this.selectedNodes.has(nodeElement); // Default toggle behavior for non-checkbox clicks
+                if (checkbox) {
+                    // If a checkbox exists, its state should drive the 'isSelected' for consistency
+                    isSelected = checkbox.checked;
+                }
+            }
+
+
             if (this.options.multiSelectEnabled) {
-                // Multi-select behavior: Toggle the clicked node's selection
-                if (this.selectedNodes.has(nodeElement)) {
-                    this.selectedNodes.delete(nodeElement);
-                    nodeElement.classList.remove('selected');
-                } else {
+                // Multi-select behavior: Add or remove based on isSelected
+                if (isSelected) {
                     this.selectedNodes.add(nodeElement);
                     nodeElement.classList.add('selected');
+                    if (checkbox) checkbox.checked = true;
+                } else {
+                    this.selectedNodes.delete(nodeElement);
+                    nodeElement.classList.remove('selected');
+                    if (checkbox) checkbox.checked = false;
                 }
             } else {
                 // Single-select behavior (including cascadeSelectChildren logic)
-                // First, clear all previously selected nodes (visual and from the set)
+                // Always clear all previously selected nodes before setting the new one
                 this.selectedNodes.forEach(node => node.classList.remove('selected'));
                 this.selectedNodes.clear();
+                // Ensure all checkboxes are unchecked too (important for single-select with checkboxes)
+                if (this.options.checkboxSelectionEnabled) {
+                    this.treeviewContainer.querySelectorAll('.treeview-checkbox').forEach(cb => cb.checked = false);
+                }
 
-                // Then, select the clicked node as the new sole selection
-                this.selectedNodes.add(nodeElement);
-                nodeElement.classList.add('selected');
+                // Only select the clicked node and its children if isSelected is true (i.e., checkbox was checked)
+                if (isSelected) {
+                    this.selectedNodes.add(nodeElement);
+                    nodeElement.classList.add('selected');
+                    if (checkbox) checkbox.checked = true;
 
-                // Apply cascading selection ONLY if cascadeSelectChildren is true
-                if (this.options.cascadeSelectChildren) {
-                    const descendants = this._getAllDescendants(nodeElement);
-                    descendants.forEach(descendantLi => {
-                        this.selectedNodes.add(descendantLi);
-                        descendantLi.classList.add('selected');
-                    });
+                    // Apply cascading selection ONLY if cascadeSelectChildren is true AND multiSelectEnabled is false
+                    if (this.options.cascadeSelectChildren) {
+                        const descendants = this._getAllDescendants(nodeElement);
+                        descendants.forEach(descendantLi => {
+                            this.selectedNodes.add(descendantLi);
+                            descendantLi.classList.add('selected');
+                            const descCheckbox = descendantLi.querySelector('.treeview-checkbox');
+                            if (descCheckbox) descCheckbox.checked = true;
+                        });
+                    }
                 }
             }
 
@@ -386,13 +461,12 @@
                 this.options.onSelectionChange(selectedData);
             }
             // Update Select All button text based on current selection state
+            // Condition no longer requires checkboxSelectionEnabled to be true
             if (this.selectAllButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled) {
                 const allSelectableNodes = this.treeviewContainer.querySelectorAll('li');
-                if (this.selectedNodes.size === allSelectableNodes.length && allSelectableNodes.length > 0) {
-                    this.selectAllButton.textContent = 'Deselect All';
-                } else {
-                    this.selectAllButton.textContent = 'Select All';
-                }
+                // Consider only nodes that *should* be selectable via checkbox (i.e., all of them)
+                const isAllSelected = allSelectableNodes.length > 0 && this.selectedNodes.size === allSelectableNodes.length;
+                this.selectAllButton.textContent = isAllSelected ? 'Deselect All' : 'Select All';
             }
         }
 

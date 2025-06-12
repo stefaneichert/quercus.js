@@ -152,3 +152,11 @@
     transform: translateY(1px);
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
+
+
+.treeview-checkbox {
+    margin-right: 5px; /* Space between checkbox and expander/text */
+    flex-shrink: 0; /* Prevent checkbox from shrinking */
+    cursor: pointer;
+    transform: scale(1.1); /* Slightly larger checkbox */
+}

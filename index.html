@@ -105,6 +105,9 @@
     <p class="section-header">Treeview 4: Single-Select with Cascade Children</p>
     <div id="myTreeview4" class="my-treeview-container"></div>
 
+    <p class="section-header">Treeview 5: Checkbox Selection Enabled (Multi-Select)</p>
+    <div id="myTreeview5" class="my-treeview-container"></div>
+
     <p class="section-header">Selected Node(s) Information:</p>
     <div id="output-area">Click a node in either tree to select/deselect it.</div>
 
@@ -161,7 +164,7 @@
             ];
 
             // Initialize Treeview 1: Default tree, Node Selection Disabled
-            const tree1 = new Treeview({
+            tree1 = new Treeview({
                 containerId: 'myTreeview1',
                 data: treeData,
                 nodeSelectionEnabled: false // Node selection is disabled for this tree
@@ -248,6 +251,22 @@
                 onSelectionChange: (selectedNodesData) => {
                     outputArea.textContent = 'Selected Nodes (Tree 4 - Cascading):\n' + JSON.stringify(selectedNodesData, null, 2);
                     console.log('Selected Nodes (Tree 4 - Cascading):', selectedNodesData);
+                }
+            });
+
+            // NEW: Initialize Treeview 5: Checkbox Selection Enabled (Multi-Select)
+            const tree5 = new Treeview({
+                containerId: 'myTreeview5',
+                data: treeData,
+                searchEnabled: true,
+                initiallyExpanded: false,
+                multiSelectEnabled: true, // Checkboxes typically imply multi-select
+                nodeSelectionEnabled: true, // Must be true for checkboxes to work
+                checkboxSelectionEnabled: true, // Enable checkbox selection
+                showSelectAllButton: true, // Select All button now applies to checkboxes
+                onSelectionChange: (selectedNodesData) => {
+                    outputArea.textContent = 'Selected Nodes (Tree 5 - Checkbox Multi-Select):\n' + JSON.stringify(selectedNodesData, null, 2);
+                    console.log('Selected Nodes (Tree 5 - Checkbox Multi-Select):', selectedNodesData);
                 }
             });
         });
