@@ -1,120 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quercus.js Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quercus.js Demo</title>
 
-    <link rel="stylesheet" href="src/treeview.css">
-    <link rel="icon" href="favicon.ico">
-    <style>
-        /* General page styling, distinct from treeview.css */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            background-color: rgba(240, 242, 245, 0);
-            color: #333;
-        }
+  <link rel="stylesheet" href="src/treeview.css">
+  <link rel="icon" href="favicon.ico">
+  <style>
+      /* General page styling, distinct from treeview.css */
+      body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 20px;
+          background-color: rgba(240, 242, 245, 0);
+          color: #333;
+      }
 
-        h1, h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
-        }
+      h1, h2 {
+          text-align: center;
+          color: #2c3e50;
+          margin-bottom: 25px;
+      }
 
-        .section-header {
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #555;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
+      .section-header {
+          margin-top: 30px;
+          margin-bottom: 15px;
+          font-size: 1.2em;
+          color: #555;
+          text-align: center;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 10px;
+      }
 
-        /* Container for individual treeview instances */
-        .my-treeview-container {
-            max-width: 600px;
-            margin: 20px auto;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+      /* Container for individual treeview instances */
+      .my-treeview-container {
+          max-width: 600px;
+          margin: 20px auto;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
 
-        #output-area {
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            padding: 15px;
-            margin: 20px auto;
-            max-width: 600px;
-            border-radius: 6px;
-            font-family: 'Fira Code', 'Cascadia Code', monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
-            color: #343a40;
-            line-height: 1.4;
-            font-size: 0.9em;
-        }
+      #output-area {
+          background-color: #e9ecef;
+          border: 1px solid #ced4da;
+          padding: 15px;
+          margin: 20px auto;
+          max-width: 600px;
+          border-radius: 6px;
+          font-family: 'Fira Code', 'Cascadia Code', monospace;
+          white-space: pre-wrap;
+          word-break: break-all;
+          color: #343a40;
+          line-height: 1.4;
+          font-size: 0.9em;
+      }
 
-        /* Custom styles for the rendered nodes in Treeview 2 and 3 */
-        .custom-treeview-wrapper .custom-node-icon {
-            margin-right: 8px;
-            color: #6c757d;
-            font-size: 1.1em;
-        }
+      /* Custom styles for the rendered nodes in Treeview 2 and 3 */
+      .custom-treeview-wrapper .custom-node-icon {
+          margin-right: 8px;
+          color: #6c757d;
+          font-size: 1.1em;
+      }
 
-        .custom-treeview-wrapper .custom-node-description {
-            font-size: 0.8em;
-            color: #6a737d;
-            margin-left: 10px;
-            font-style: italic;
-        }
+      .custom-treeview-wrapper .custom-node-description {
+          font-size: 0.8em;
+          color: #6a737d;
+          margin-left: 10px;
+          font-style: italic;
+      }
 
-        .custom-treeview-wrapper .custom-node-name {
-            font-weight: 500;
-        }
+      .custom-treeview-wrapper .custom-node-name {
+          font-weight: 500;
+      }
 
-        .custom-treeview-wrapper .custom-node-status-active {
-            color: #28a745;
-            font-weight: bold;
-        }
+      .custom-treeview-wrapper .custom-node-status-active {
+          color: #28a745;
+          font-weight: bold;
+      }
 
-        .custom-treeview-wrapper .custom-node-status-inactive {
-            color: #dc3545;
-        }
+      .custom-treeview-wrapper .custom-node-status-inactive {
+          color: #dc3545;
+      }
 
-        .main-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      .main-header {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
 
-        .main-header h1 {
-            margin: 20px;
-        }
-    </style>
+      .main-header h1 {
+          margin: 20px;
+      }
+      .tree-output {
+      background: #f1f1f1;
+      padding: 12px 16px;
+      margin-top: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      min-height: 1em;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  </style>
 </head>
 <body>
 <div class="main-header"><img height="40px" src="logo.png">
-    <h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
+  <h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
 
 <p class="section-header">Treeview 1: Default tree, Node Selection Disabled</p>
 <div id="myTreeview1" class="my-treeview-container"></div>
 
 <p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering</p>
 <div id="myTreeview2" class="my-treeview-container"></div>
+<div id="tree-output2" style="text-align: center; display: none;">
+  <div id="label2" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output2" class="tree-output"></pre>
+</div>
+
 
 <p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
 <div id="myTreeview3" class="my-treeview-container"></div>
+<div id="tree-output3" style="text-align: center; display: none;">
+  <div id="label3" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output3" class="tree-output"></pre>
+</div>
+
 
 <p class="section-header">Treeview 4: Single-Select with Cascade Children</p>
 <div id="myTreeview4" class="my-treeview-container"></div>
+<div id="tree-output4" style="text-align: center; display: none;">
+  <div id="label4" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output4" class="tree-output"></pre>
+</div>
+
 
 <p class="section-header">Treeview 5: Checkbox Selection Enabled (Multi-Select)</p>
 <div id="myTreeview5" class="my-treeview-container"></div>
+<div id="tree-output5" style="text-align: center; display: none;">
+  <div id="label5" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output5" class="tree-output"></pre>
+</div>
 
-<p class="section-header">Selected Node(s) Information:</p>
-<div id="output-area">Click a node in either tree to select/deselect it.</div>
+
+
 
 <script src="src/treeview.js"></script>
 
@@ -189,13 +223,46 @@
             searchEnabled: true,
             initiallyExpanded: false,
             multiSelectEnabled: true,
-            onSelectionChange: (selectedNodesData) => {
-                outputArea.textContent = 'Selected Nodes (Tree 2):\n' + JSON.stringify(selectedNodesData, null, 2);
-                console.log('Selected Nodes (Tree 2):', selectedNodesData);
-            },
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label2');
+            const output = document.getElementById('output2');
+            const wrapper = document.getElementById('tree-output2');
+            const count = names.length;
+            const opts = window.tree2.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none';
+              return;
+            }
+
+            wrapper.style.display = 'block';
+
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            label.textContent = `${modeLabel}, ${countLabel}:`;
+            output.textContent = `[${names.join(', ')}]`;
+          }
+
+
+          ,
             showSelectAllButton: true,
             showExpandCollapseAllButtons: false
         });
+        document.getElementById('output2').textContent = 'Selected (Tree 2):';
+
 
         // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering
         window.tree3 = new Treeview({
@@ -204,10 +271,45 @@
             searchEnabled: true,
             initiallyExpanded: true,
             multiSelectEnabled: false,
-            onSelectionChange: (selectedNodesData) => {
-                outputArea.textContent = 'Selected Node (Tree 3):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
-                console.log('Selected Node (Tree 3):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
-            },
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label3');
+            const output = document.getElementById('output3');
+            const wrapper = document.getElementById('tree-output3');
+            const count = names.length;
+
+            const opts = window.tree3.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none'; // Verstecken wenn leer
+              return;
+            }
+
+            wrapper.style.display = 'block'; // Zeigen wenn etwas gewählt ist
+
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            const header = `${modeLabel}, ${countLabel}:`;
+
+            label.textContent = header;
+            output.textContent = `[${names.join(', ')}]`;
+          }
+
+
+
+          ,
             showSelectAllButton: false,
             showExpandCollapseAllButtons: true,
             onRenderNode: (nodeData, nodeContentWrapperElement) => {
@@ -250,6 +352,9 @@
                 }
             }
         });
+      document.getElementById('label3').textContent = 'Single Selection Mode, Node selected:';
+      document.getElementById('output3').textContent = '';
+
 
         // Initialize Treeview 4: Single-Select with Cascade Children
         window.tree4 = new Treeview({
@@ -260,11 +365,43 @@
             multiSelectEnabled: false, // Must be false for cascadeSelectChildren to apply as per your request
             nodeSelectionEnabled: true, // Ensure node selection is enabled
             cascadeSelectChildren: true, // Enable cascading selection
-            onSelectionChange: (selectedNodesData) => {
-                outputArea.textContent = 'Selected Nodes (Tree 4 - Cascading):\n' + JSON.stringify(selectedNodesData, null, 2);
-                console.log('Selected Nodes (Tree 4 - Cascading):', selectedNodesData);
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label4');
+            const output = document.getElementById('output4');
+            const wrapper = document.getElementById('tree-output4');
+            const count = names.length;
+            const opts = window.tree4.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none';
+              return;
             }
+
+            wrapper.style.display = 'block';
+
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Node(s)';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            label.textContent = `${modeLabel}, ${countLabel}:`;
+            output.textContent = `[${names.join(', ')}]`;
+          }
+
+
         });
+        document.getElementById('output4').textContent = 'Selected (Tree 4):';
+
 
         // Initialize Treeview 5: Checkbox Selection Enabled (Multi-Select)
         window.tree5 = new Treeview({
@@ -276,11 +413,43 @@
             nodeSelectionEnabled: true, // Must be true for checkboxes to work
             checkboxSelectionEnabled: true, // Enable checkbox selection
             showSelectAllButton: true, // Select All button now applies to checkboxes
-            onSelectionChange: (selectedNodesData) => {
-                outputArea.textContent = 'Selected Nodes (Tree 5 - Checkbox Multi-Select):\n' + JSON.stringify(selectedNodesData, null, 2);
-                console.log('Selected Nodes (Tree 5 - Checkbox Multi-Select):', selectedNodesData);
+          onSelectionChange: (selectedNodes) => {
+            const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label5');
+            const output = document.getElementById('output5');
+            const wrapper = document.getElementById('tree-output5');
+            const count = names.length;
+            const opts = window.tree5.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none';
+              return;
             }
+
+            wrapper.style.display = 'block';
+
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Node(s)';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            label.textContent = `${modeLabel}, ${countLabel}:`;
+            output.textContent = `[${names.join(', ')}]`;
+          }
+
+
         });
+        document.getElementById('output5').textContent = 'Selected (Tree 5):';
+
     });
 </script>
 </body>
