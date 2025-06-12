@@ -1,275 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quercus.js Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quercus.js Demo</title>
 
-    <link rel="stylesheet" href="src/treeview.css">
-    <link rel="icon" href="favicon.ico">
-    <style>
-        /* General page styling, distinct from treeview.css */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            background-color: rgba(240, 242, 245, 0);
-            color: #333;
-        }
+  <link rel="stylesheet" href="src/treeview.css">
+  <link rel="icon" href="favicon.ico">
+  <style>
+      /* General page styling, distinct from treeview.css */
+      body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 20px;
+          background-color: rgba(240, 242, 245, 0);
+          color: #333;
+      }
 
-        h1, h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
-        }
+      h1, h2 {
+          text-align: center;
+          color: #2c3e50;
+          margin-bottom: 25px;
+      }
 
-        .section-header {
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #555;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
+      .section-header {
+          margin-top: 30px;
+          margin-bottom: 15px;
+          font-size: 1.2em;
+          color: #555;
+          text-align: center;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 10px;
+      }
 
-        /* Container for individual treeview instances */
-        .my-treeview-container {
-            max-width: 600px;
-            margin: 20px auto;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+      /* Container for individual treeview instances */
+      .my-treeview-container {
+          max-width: 600px;
+          margin: 20px auto;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
 
-        #output-area {
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            padding: 15px;
-            margin: 20px auto;
-            max-width: 600px;
-            border-radius: 6px;
-            font-family: 'Fira Code', 'Cascadia Code', monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
-            color: #343a40;
-            line-height: 1.4;
-            font-size: 0.9em;
-        }
+      #output-area {
+          background-color: #e9ecef;
+          border: 1px solid #ced4da;
+          padding: 15px;
+          margin: 20px auto;
+          max-width: 600px;
+          border-radius: 6px;
+          font-family: 'Fira Code', 'Cascadia Code', monospace;
+          white-space: pre-wrap;
+          word-break: break-all;
+          color: #343a40;
+          line-height: 1.4;
+          font-size: 0.9em;
+      }
 
-        /* Custom styles for the rendered nodes in Treeview 2 and 3 */
-        .custom-treeview-wrapper .custom-node-icon {
-            margin-right: 8px;
-            color: #6c757d;
-            font-size: 1.1em;
-        }
-        .custom-treeview-wrapper .custom-node-description {
-            font-size: 0.8em;
-            color: #6a737d;
-            margin-left: 10px;
-            font-style: italic;
-        }
-        .custom-treeview-wrapper .custom-node-name {
-            font-weight: 500;
-        }
-        .custom-treeview-wrapper .custom-node-status-active {
-            color: #28a745;
-            font-weight: bold;
-        }
-        .custom-treeview-wrapper .custom-node-status-inactive {
-            color: #dc3545;
-        }
+      /* Custom styles for the rendered nodes in Treeview 2 and 3 */
+      .custom-treeview-wrapper .custom-node-icon {
+          margin-right: 8px;
+          color: #6c757d;
+          font-size: 1.1em;
+      }
 
-        .main-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      .custom-treeview-wrapper .custom-node-description {
+          font-size: 0.8em;
+          color: #6a737d;
+          margin-left: 10px;
+          font-style: italic;
+      }
 
-        .main-header h1 {
-            margin: 20px;
-        }
-    </style>
+      .custom-treeview-wrapper .custom-node-name {
+          font-weight: 500;
+      }
+
+      .custom-treeview-wrapper .custom-node-status-active {
+          color: #28a745;
+          font-weight: bold;
+      }
+
+      .custom-treeview-wrapper .custom-node-status-inactive {
+          color: #dc3545;
+      }
+
+      .main-header {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+
+      .main-header h1 {
+          margin: 20px;
+      }
+  </style>
 </head>
 <body>
-    <div class="main-header"><img height="40px" src="logo.png"><h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
+<div class="main-header"><img height="40px" src="logo.png">
+  <h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
 
-    <p class="section-header">Treeview 1: Default tree, Node Selection Disabled</p>
-    <div id="myTreeview1" class="my-treeview-container"></div>
+<p class="section-header">Treeview 1: Default tree, Node Selection Disabled</p>
+<div id="myTreeview1" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering</p>
-    <div id="myTreeview2" class="my-treeview-container"></div>
+<p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering</p>
+<div id="myTreeview2" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
-    <div id="myTreeview3" class="my-treeview-container"></div>
+<p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
+<div id="myTreeview3" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 4: Single-Select with Cascade Children</p>
-    <div id="myTreeview4" class="my-treeview-container"></div>
+<p class="section-header">Treeview 4: Single-Select with Cascade Children</p>
+<div id="myTreeview4" class="my-treeview-container"></div>
 
-    <p class="section-header">Treeview 5: Checkbox Selection Enabled (Multi-Select)</p>
-    <div id="myTreeview5" class="my-treeview-container"></div>
+<p class="section-header">Treeview 5: Checkbox Selection Enabled (Multi-Select)</p>
+<div id="myTreeview5" class="my-treeview-container"></div>
 
-    <p class="section-header">Selected Node(s) Information:</p>
-    <div id="output-area">Click a node in either tree to select/deselect it.</div>
+<p class="section-header">Selected Node(s) Information:</p>
+<div id="output-area">Click a node in either tree to select/deselect it.</div>
 
-    <script src="src/treeview.js"></script>
+<script src="src/treeview.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const outputArea = document.getElementById('output-area');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const outputArea = document.getElementById('output-area');
 
-            const treeData = [
-                {
-                    id: 'doc-root',
-                    name: 'Documents',
-                    type: 'folder',
-                    status: 'active',
-                    description: 'All company documents',
-                    children: [
-                        {
-                            id: 'doc-work',
-                            name: 'Work',
-                            type: 'folder',
-                            status: 'active',
-                            children: [
-                                { id: 'doc-alpha', name: 'Project Alpha', type: 'file', status: 'active', size: '1.2MB' },
-                                { id: 'doc-beta', name: 'Project Beta', type: 'file', status: 'inactive', size: '0.8MB' },
-                                { id: 'doc-notes', name: 'Meeting Notes', type: 'file', status: 'active', lastModified: '2023-01-15' }
-                            ]
-                        },
-                        {
-                            id: 'doc-personal',
-                            name: 'Personal',
-                            type: 'folder',
-                            status: 'active',
-                            children: [
-                                { id: 'doc-vacation', name: 'Vacation Photos', type: 'image', status: 'active' },
-                                { id: 'doc-resumes', name: 'Resumes', type: 'file', status: 'active' }
-                            ]
-                        },
-                        { id: 'doc-inbox', name: 'Inbox', type: 'folder', status: 'inactive' }
-                    ]
-                },
-                {
-                    id: 'dl-root',
-                    name: 'Downloads',
-                    type: 'folder',
-                    status: 'active',
-                    children: [
-                        { id: 'dl-software', name: 'Software', type: 'file', status: 'active' },
-                        { id: 'dl-archives', name: 'Archives', type: 'file', status: 'inactive' }
-                    ]
-                },
-                { id: 'music-root', name: 'Music', type: 'folder', status: 'active' },
-                { id: 'videos-root', name: 'Videos', type: 'folder', status: 'inactive' }
-            ];
+        const treeData = [
+            {
+                id: 'doc-root',
+                name: 'Documents',
+                type: 'folder',
+                status: 'active',
+                description: 'All company documents',
+                children: [
+                    {
+                        id: 'doc-work',
+                        name: 'Work',
+                        type: 'folder',
+                        status: 'active',
+                        children: [
+                            {id: 'doc-alpha', name: 'Project Alpha', type: 'file', status: 'active', size: '1.2MB'},
+                            {id: 'doc-beta', name: 'Project Beta', type: 'file', status: 'inactive', size: '0.8MB'},
+                            {id: 'doc-notes', name: 'Meeting Notes', type: 'file', status: 'active', lastModified: '2023-01-15'}
+                        ]
+                    },
+                    {
+                        id: 'doc-personal',
+                        name: 'Personal',
+                        type: 'folder',
+                        status: 'active',
+                        children: [
+                            {id: 'doc-vacation', name: 'Vacation Photos', type: 'image', status: 'active'},
+                            {id: 'doc-resumes', name: 'Resumes', type: 'file', status: 'active'}
+                        ]
+                    },
+                    {id: 'doc-inbox', name: 'Inbox', type: 'folder', status: 'inactive'}
+                ]
+            },
+            {
+                id: 'dl-root',
+                name: 'Downloads',
+                type: 'folder',
+                status: 'active',
+                children: [
+                    {id: 'dl-software', name: 'Software', type: 'file', status: 'active'},
+                    {id: 'dl-archives', name: 'Archives', type: 'file', status: 'inactive'}
+                ]
+            },
+            {id: 'music-root', name: 'Music', type: 'folder', status: 'active'},
+            {id: 'videos-root', name: 'Videos', type: 'folder', status: 'inactive'}
+        ];
 
-            // Initialize Treeview 1: Default tree, Node Selection Disabled
-            tree1 = new Treeview({
-                containerId: 'myTreeview1',
-                data: treeData,
-                nodeSelectionEnabled: false // Node selection is disabled for this tree
-            });
 
-            // Initialize Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering
-            const tree2 = new Treeview({
-                containerId: 'myTreeview2',
-                data: treeData,
-                searchEnabled: true,
-                initiallyExpanded: false,
-                multiSelectEnabled: true,
-                onSelectionChange: (selectedNodesData) => {
-                    outputArea.textContent = 'Selected Nodes (Tree 2):\n' + JSON.stringify(selectedNodesData, null, 2);
-                    console.log('Selected Nodes (Tree 2):', selectedNodesData);
-                },
-                showSelectAllButton: true,
-                showExpandCollapseAllButtons: false
-            });
-
-            // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering
-            const tree3 = new Treeview({
-                containerId: 'myTreeview3',
-                data: treeData,
-                searchEnabled: true,
-                initiallyExpanded: true,
-                multiSelectEnabled: false,
-                onSelectionChange: (selectedNodesData) => {
-                    outputArea.textContent = 'Selected Node (Tree 3):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
-                    console.log('Selected Node (Tree 3):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
-                },
-                showSelectAllButton: false,
-                showExpandCollapseAllButtons: true,
-                onRenderNode: (nodeData, nodeContentWrapperElement) => {
-                    nodeContentWrapperElement.innerHTML = '';
-
-                    const iconSpan = document.createElement('span');
-                    iconSpan.classList.add('custom-node-icon');
-                    if (nodeData.type === 'folder') {
-                        iconSpan.textContent = '📁';
-                    } else if (nodeData.type === 'file') {
-                        iconSpan.textContent = '📄';
-                    } else if (nodeData.type === 'image') {
-                        iconSpan.textContent = '🖼️';
-                    } else {
-                        iconSpan.textContent = '▪️';
-                    }
-                    nodeContentWrapperElement.appendChild(iconSpan);
-
-                    const nameSpan = document.createElement('span');
-                    nameSpan.classList.add('treeview-node-text', 'custom-node-name');
-                    nameSpan.textContent = nodeData.name;
-                    nodeContentWrapperElement.appendChild(nameSpan);
-
-                    if (nodeData.description) {
-                        const descSpan = document.createElement('span');
-                        descSpan.classList.add('custom-node-description');
-                        descSpan.textContent = ` (${nodeData.description})`;
-                        nodeContentWrapperElement.appendChild(descSpan);
-                    } else if (nodeData.status) {
-                        const statusSpan = document.createElement('span');
-                        statusSpan.classList.add('custom-node-description');
-                        statusSpan.textContent = ` [${nodeData.status}]`;
-                        statusSpan.classList.add(nodeData.status === 'active' ? 'custom-node-status-active' : 'custom-node-status-inactive');
-                        nodeContentWrapperElement.appendChild(statusSpan);
-                    } else if (nodeData.size) {
-                        const sizeSpan = document.createElement('span');
-                        sizeSpan.classList.add('custom-node-description');
-                        sizeSpan.textContent = ` (${nodeData.size})`;
-                        nodeContentWrapperElement.appendChild(sizeSpan);
-                    }
-                }
-            });
-
-            // NEW: Initialize Treeview 4: Single-Select with Cascade Children
-            const tree4 = new Treeview({
-                containerId: 'myTreeview4',
-                data: treeData,
-                searchEnabled: false,
-                initiallyExpanded: false,
-                multiSelectEnabled: false, // Must be false for cascadeSelectChildren to apply as per your request
-                nodeSelectionEnabled: true, // Ensure node selection is enabled
-                cascadeSelectChildren: true, // Enable cascading selection
-                onSelectionChange: (selectedNodesData) => {
-                    outputArea.textContent = 'Selected Nodes (Tree 4 - Cascading):\n' + JSON.stringify(selectedNodesData, null, 2);
-                    console.log('Selected Nodes (Tree 4 - Cascading):', selectedNodesData);
-                }
-            });
-
-            // NEW: Initialize Treeview 5: Checkbox Selection Enabled (Multi-Select)
-            const tree5 = new Treeview({
-                containerId: 'myTreeview5',
-                data: treeData,
-                searchEnabled: true,
-                initiallyExpanded: false,
-                multiSelectEnabled: true, // Checkboxes typically imply multi-select
-                nodeSelectionEnabled: true, // Must be true for checkboxes to work
-                checkboxSelectionEnabled: true, // Enable checkbox selection
-                showSelectAllButton: true, // Select All button now applies to checkboxes
-                onSelectionChange: (selectedNodesData) => {
-                    outputArea.textContent = 'Selected Nodes (Tree 5 - Checkbox Multi-Select):\n' + JSON.stringify(selectedNodesData, null, 2);
-                    console.log('Selected Nodes (Tree 5 - Checkbox Multi-Select):', selectedNodesData);
-                }
-            });
+        // Initialize Treeview 1: Default tree, Node Selection Disabled
+        window.tree1 = new Treeview({
+            containerId: 'myTreeview1',
+            data: treeData,
+            nodeSelectionEnabled: false // Node selection is disabled for this tree
         });
-    </script>
+
+        // Initialize Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering
+        window.tree2 = new Treeview({
+            containerId: 'myTreeview2',
+            data: treeData,
+            searchEnabled: true,
+            initiallyExpanded: false,
+            multiSelectEnabled: true,
+            onSelectionChange: (selectedNodesData) => {
+                outputArea.textContent = 'Selected Nodes (Tree 2):\n' + JSON.stringify(selectedNodesData, null, 2);
+                console.log('Selected Nodes (Tree 2):', selectedNodesData);
+            },
+            showSelectAllButton: true,
+            showExpandCollapseAllButtons: false
+        });
+
+        // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering
+        window.tree3 = new Treeview({
+            containerId: 'myTreeview3',
+            data: treeData,
+            searchEnabled: true,
+            initiallyExpanded: true,
+            multiSelectEnabled: false,
+            onSelectionChange: (selectedNodesData) => {
+                outputArea.textContent = 'Selected Node (Tree 3):\n' + JSON.stringify(selectedNodesData.length > 0 ? selectedNodesData[0] : null, null, 2);
+                console.log('Selected Node (Tree 3):', selectedNodesData.length > 0 ? selectedNodesData[0] : null);
+            },
+            showSelectAllButton: false,
+            showExpandCollapseAllButtons: true,
+            onRenderNode: (nodeData, nodeContentWrapperElement) => {
+                nodeContentWrapperElement.innerHTML = '';
+
+                const iconSpan = document.createElement('span');
+                iconSpan.classList.add('custom-node-icon');
+                if (nodeData.type === 'folder') {
+                    iconSpan.textContent = '📁';
+                } else if (nodeData.type === 'file') {
+                    iconSpan.textContent = '📄';
+                } else if (nodeData.type === 'image') {
+                    iconSpan.textContent = '🖼️';
+                } else {
+                    iconSpan.textContent = '▪️';
+                }
+                nodeContentWrapperElement.appendChild(iconSpan);
+
+                const nameSpan = document.createElement('span');
+                nameSpan.classList.add('treeview-node-text', 'custom-node-name');
+                nameSpan.textContent = nodeData.name;
+                nodeContentWrapperElement.appendChild(nameSpan);
+
+                if (nodeData.description) {
+                    const descSpan = document.createElement('span');
+                    descSpan.classList.add('custom-node-description');
+                    descSpan.textContent = ` (${nodeData.description})`;
+                    nodeContentWrapperElement.appendChild(descSpan);
+                } else if (nodeData.status) {
+                    const statusSpan = document.createElement('span');
+                    statusSpan.classList.add('custom-node-description');
+                    statusSpan.textContent = ` [${nodeData.status}]`;
+                    statusSpan.classList.add(nodeData.status === 'active' ? 'custom-node-status-active' : 'custom-node-status-inactive');
+                    nodeContentWrapperElement.appendChild(statusSpan);
+                } else if (nodeData.size) {
+                    const sizeSpan = document.createElement('span');
+                    sizeSpan.classList.add('custom-node-description');
+                    sizeSpan.textContent = ` (${nodeData.size})`;
+                    nodeContentWrapperElement.appendChild(sizeSpan);
+                }
+            }
+        });
+
+        // NEW: Initialize Treeview 4: Single-Select with Cascade Children
+        window.tree4 = new Treeview({
+            containerId: 'myTreeview4',
+            data: treeData,
+            searchEnabled: false,
+            initiallyExpanded: false,
+            multiSelectEnabled: false, // Must be false for cascadeSelectChildren to apply as per your request
+            nodeSelectionEnabled: true, // Ensure node selection is enabled
+            cascadeSelectChildren: true, // Enable cascading selection
+            onSelectionChange: (selectedNodesData) => {
+                outputArea.textContent = 'Selected Nodes (Tree 4 - Cascading):\n' + JSON.stringify(selectedNodesData, null, 2);
+                console.log('Selected Nodes (Tree 4 - Cascading):', selectedNodesData);
+            }
+        });
+
+        // NEW: Initialize Treeview 5: Checkbox Selection Enabled (Multi-Select)
+        window.tree5 = new Treeview({
+            containerId: 'myTreeview5',
+            data: treeData,
+            searchEnabled: true,
+            initiallyExpanded: false,
+            multiSelectEnabled: true, // Checkboxes typically imply multi-select
+            nodeSelectionEnabled: true, // Must be true for checkboxes to work
+            checkboxSelectionEnabled: true, // Enable checkbox selection
+            showSelectAllButton: true, // Select All button now applies to checkboxes
+            onSelectionChange: (selectedNodesData) => {
+                outputArea.textContent = 'Selected Nodes (Tree 5 - Checkbox Multi-Select):\n' + JSON.stringify(selectedNodesData, null, 2);
+                console.log('Selected Nodes (Tree 5 - Checkbox Multi-Select):', selectedNodesData);
+            }
+        });
+    });
+</script>
 </body>
 </html>

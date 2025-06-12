@@ -14,7 +14,7 @@
  * Option to cascade selection to children when a parent is selected (only if multiSelectEnabled is false).
  * Option to display checkboxes for node selection, positioned between expander and label.
  */
-(function() { // Anonymous IIFE for encapsulation
+(function () { // Anonymous IIFE for encapsulation
 
     /**
      * Helper function to get the node's display name for internal use (e.g., search or selection callback).
@@ -196,7 +196,7 @@
             });
 
             if (this.selectAllButton) {
-                 this.selectAllButton.textContent = shouldSelectAll ? 'Deselect All' : 'Select All';
+                this.selectAllButton.textContent = shouldSelectAll ? 'Deselect All' : 'Select All';
             }
             this._triggerSelectionChange();
         }
@@ -221,7 +221,7 @@
                         childUl.addEventListener('transitionend', function handler() {
                             childUl.removeEventListener('transitionend', handler);
                             childUl.style.height = 'auto';
-                        }, { once: true });
+                        }, {once: true});
                     }
                 }
             });
@@ -246,7 +246,7 @@
                         childUl.addEventListener('transitionend', function handler() {
                             childUl.removeEventListener('transitionend', handler);
                             childUl.style.height = ''; // Clear height after transition
-                        }, { once: true });
+                        }, {once: true});
                     }
                 }
             }
@@ -270,13 +270,13 @@
                 // 1. Create and add the node's main content (text or custom rendering) first
                 if (typeof this.options.onRenderNode === 'function') {
                     try {
-                         this.options.onRenderNode(node, nodeContentWrapper);
+                        this.options.onRenderNode(node, nodeContentWrapper);
                     } catch (e) {
-                         console.error("Quercus.js: Error in custom node renderer:", e);
-                         const nodeTextSpan = document.createElement('span'); // Fallback to default text
-                         nodeTextSpan.classList.add('treeview-node-text');
-                         nodeTextSpan.textContent = node.name;
-                         nodeContentWrapper.appendChild(nodeTextSpan);
+                        console.error("Quercus.js: Error in custom node renderer:", e);
+                        const nodeTextSpan = document.createElement('span'); // Fallback to default text
+                        nodeTextSpan.classList.add('treeview-node-text');
+                        nodeTextSpan.textContent = node.name;
+                        nodeContentWrapper.appendChild(nodeTextSpan);
                     }
                 } else {
                     const nodeTextSpan = document.createElement('span');
@@ -341,7 +341,7 @@
                                 childUl.addEventListener('transitionend', function handler() {
                                     childUl.removeEventListener('transitionend', handler);
                                     childUl.style.height = '';
-                                }, { once: true });
+                                }, {once: true});
                             } else {
                                 li.classList.add('expanded');
                                 expanderOrPlaceholder.textContent = '-';
@@ -352,7 +352,7 @@
                                 childUl.addEventListener('transitionend', function handler() {
                                     childUl.removeEventListener('transitionend', handler);
                                     childUl.style.height = 'auto';
-                                }, { once: true });
+                                }, {once: true});
                             }
                         }
                         event.stopPropagation();
@@ -366,7 +366,7 @@
                     nodeContentWrapper.addEventListener('click', (event) => {
                         // Prevent selection when clicking the expander
                         if (!event.target.classList.contains('treeview-expander')) {
-                             this._selectNode(li, !li.classList.contains('selected')); // Pass current selection state for toggle
+                            this._selectNode(li, !li.classList.contains('selected')); // Pass current selection state for toggle
                         }
                         event.stopPropagation();
                     });
@@ -455,7 +455,7 @@
                         return JSON.parse(nodeElement.dataset.nodeData);
                     } catch (e) {
                         console.error("Quercus.js: Error parsing selected node data:", e);
-                        return { id: nodeElement.dataset.id, name: getDisplayNameFromNodeElement(nodeElement) };
+                        return {id: nodeElement.dataset.id, name: getDisplayNameFromNodeElement(nodeElement)};
                     }
                 });
                 this.options.onSelectionChange(selectedData);
@@ -491,20 +491,20 @@
                             childUl.addEventListener('transitionend', function handler() {
                                 childUl.removeEventListener('transitionend', handler);
                                 childUl.style.height = '';
-                            }, { once: true });
+                            }, {once: true});
                         }
                     }
                 });
                 if (this.options.initiallyExpanded) {
-                     this.treeviewContainer.querySelectorAll('li.has-children > ul').forEach(ul => {
-                         ul.style.height = 'auto';
-                         const parentLi = ul.closest('li');
-                         if (parentLi) {
-                             parentLi.classList.add('expanded');
-                             const expander = parentLi.querySelector('.treeview-expander');
-                             if (expander) expander.textContent = '-';
-                         }
-                     });
+                    this.treeviewContainer.querySelectorAll('li.has-children > ul').forEach(ul => {
+                        ul.style.height = 'auto';
+                        const parentLi = ul.closest('li');
+                        if (parentLi) {
+                            parentLi.classList.add('expanded');
+                            const expander = parentLi.querySelector('.treeview-expander');
+                            if (expander) expander.textContent = '-';
+                        }
+                    });
                 }
                 return;
             }
@@ -542,7 +542,7 @@
             matchingNodes.forEach(node => {
                 node.classList.remove('hidden');
                 let current = node;
-                while(current.parentElement && current.parentElement.tagName === 'UL') {
+                while (current.parentElement && current.parentElement.tagName === 'UL') {
                     current.parentElement.classList.remove('hidden-by-parent');
                     current = current.parentElement;
                 }
@@ -575,14 +575,17 @@
             }
         }
 
-        getSelectedNode() { return this.getSelectedNodes(); }
+        getSelectedNode() {
+            return this.getSelectedNodes();
+        }
+
         getSelectedNodes() {
             const selectedData = Array.from(this.selectedNodes).map(nodeElement => {
                 try {
                     return JSON.parse(nodeElement.dataset.nodeData);
                 } catch (e) {
                     console.error("Quercus.js: Error parsing selected node data:", e);
-                    return { id: nodeElement.dataset.id, name: getDisplayNameFromNodeElement(nodeElement) };
+                    return {id: nodeElement.dataset.id, name: getDisplayNameFromNodeElement(nodeElement)};
                 }
             });
             return selectedData;
