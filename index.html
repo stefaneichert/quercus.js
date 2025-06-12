@@ -1,102 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quercus.js Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quercus.js Demo</title>
 
-  <link rel="stylesheet" href="src/treeview.css">
-  <link rel="icon" href="favicon.ico">
-  <style>
-      /* General page styling, distinct from treeview.css */
-      body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          margin: 20px;
-          background-color: rgba(240, 242, 245, 0);
-          color: #333;
-      }
+    <link rel="stylesheet" href="src/treeview.css">
+    <link rel="icon" href="favicon.ico">
+    <style>
+        /* General page styling, distinct from treeview.css */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: rgba(240, 242, 245, 0);
+            color: #333;
+        }
 
-      h1, h2 {
-          text-align: center;
-          color: #2c3e50;
-          margin-bottom: 25px;
-      }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
 
-      .section-header {
-          margin-top: 30px;
-          margin-bottom: 15px;
-          font-size: 1.2em;
-          color: #555;
-          text-align: center;
-          border-bottom: 1px solid #ddd;
-          padding-bottom: 10px;
-      }
+        .section-header {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #555;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
 
-      /* Container for individual treeview instances */
-      .my-treeview-container {
-          max-width: 600px;
-          margin: 20px auto;
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
+        /* Container for individual treeview instances */
+        .my-treeview-container {
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-      #output-area {
-          background-color: #e9ecef;
-          border: 1px solid #ced4da;
-          padding: 15px;
-          margin: 20px auto;
-          max-width: 600px;
-          border-radius: 6px;
-          font-family: 'Fira Code', 'Cascadia Code', monospace;
-          white-space: pre-wrap;
-          word-break: break-all;
-          color: #343a40;
-          line-height: 1.4;
-          font-size: 0.9em;
-      }
+        #output-area {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 6px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #343a40;
+            line-height: 1.4;
+            font-size: 0.9em;
+        }
 
-      /* Custom styles for the rendered nodes in Treeview 2 and 3 */
-      .custom-treeview-wrapper .custom-node-icon {
-          margin-right: 8px;
-          color: #6c757d;
-          font-size: 1.1em;
-      }
+        /* Custom styles for the rendered nodes in Treeview 2 and 3 */
+        .custom-treeview-wrapper .custom-node-icon {
+            margin-right: 8px;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
 
-      .custom-treeview-wrapper .custom-node-description {
-          font-size: 0.8em;
-          color: #6a737d;
-          margin-left: 10px;
-          font-style: italic;
-      }
+        .custom-treeview-wrapper .custom-node-description {
+            font-size: 0.8em;
+            color: #6a737d;
+            margin-left: 10px;
+            font-style: italic;
+        }
 
-      .custom-treeview-wrapper .custom-node-name {
-          font-weight: 500;
-      }
+        .custom-treeview-wrapper .custom-node-name {
+            font-weight: 500;
+        }
 
-      .custom-treeview-wrapper .custom-node-status-active {
-          color: #28a745;
-          font-weight: bold;
-      }
+        .custom-treeview-wrapper .custom-node-status-active {
+            color: #28a745;
+            font-weight: bold;
+        }
 
-      .custom-treeview-wrapper .custom-node-status-inactive {
-          color: #dc3545;
-      }
+        .custom-treeview-wrapper .custom-node-status-inactive {
+            color: #dc3545;
+        }
 
-      .main-header {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-      }
+        .main-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-      .main-header h1 {
-          margin: 20px;
-      }
-  </style>
+        .main-header h1 {
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="main-header"><img height="40px" src="logo.png">
-  <h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
+    <h1>Quercus.js - Live Demo</h1><img height="40px" src="logo.png"></div>
 
 <p class="section-header">Treeview 1: Default tree, Node Selection Disabled</p>
 <div id="myTreeview1" class="my-treeview-container"></div>
@@ -138,7 +138,13 @@
                         children: [
                             {id: 'doc-alpha', name: 'Project Alpha', type: 'file', status: 'active', size: '1.2MB'},
                             {id: 'doc-beta', name: 'Project Beta', type: 'file', status: 'inactive', size: '0.8MB'},
-                            {id: 'doc-notes', name: 'Meeting Notes', type: 'file', status: 'active', lastModified: '2023-01-15'}
+                            {
+                                id: 'doc-notes',
+                                name: 'Meeting Notes',
+                                type: 'file',
+                                status: 'active',
+                                lastModified: '2023-01-15'
+                            }
                         ]
                     },
                     {

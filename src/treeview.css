@@ -8,7 +8,7 @@
     border-radius: 5px;
     max-width: 600px;
     margin: 10px auto;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Search input specific to the library */
@@ -138,7 +138,7 @@
     font-size: 0.9em;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     flex-grow: 1; /* Allow buttons to grow to fill space */
     min-width: 110px; /* Minimum width for buttons */
     max-width: 48%; /* Max width to allow two columns on wider screens */
@@ -150,7 +150,7 @@
 
 .treeview-control-button:active {
     transform: translateY(1px);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 
