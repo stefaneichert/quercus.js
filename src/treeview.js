@@ -46,8 +46,8 @@
                 showSelectAllButton: false,
                 showExpandCollapseAllButtons: false,
                 nodeSelectionEnabled: true,
-                cascadeSelectChildren: false, // Option to cascade selection to children
-                checkboxSelectionEnabled: false // Option to enable/disable checkbox display and control
+                cascadeSelectChildren: false,
+                checkboxSelectionEnabled: false
             };
             Object.assign(this.options, options);
 
@@ -158,7 +158,7 @@
             }
         }
 
-        // Toggle Select All / Deselect All logic (UPDATED for checkboxes)
+        // Toggle Select All / Deselect All logic
         _toggleSelectAll() {
             if (!this.options.nodeSelectionEnabled) {
                 console.warn("Quercus.js: Node selection is disabled, cannot select/deselect all nodes.");
@@ -201,7 +201,7 @@
             this._triggerSelectionChange();
         }
 
-        // Expand All logic (UPDATED for smooth animation)
+        // Expand All logic
         _expandAll() {
             const allExpandableNodes = this.treeviewContainer.querySelectorAll('li.has-children');
             allExpandableNodes.forEach(li => {
