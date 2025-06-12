@@ -210,9 +210,17 @@
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
             const output = document.getElementById('output2');
+            const count = names.length;
 
-            output.textContent = `Selected (Tree 2):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
-          },
+            const isSingleMode = !window.tree2.options.multiSelectEnabled && !window.tree2.options.cascadeSelectChildren;
+
+            const header = isSingleMode
+                    ? `Selected (Tree 2):`
+                    : `Selected (Tree 2) – ${count} selected:`;
+
+            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
+          }
+          ,
             showSelectAllButton: true,
             showExpandCollapseAllButtons: false
         });
@@ -229,9 +237,18 @@
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
             const output = document.getElementById('output3');
+            const count = names.length;
 
-            output.textContent = `Selected (Tree 3):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
-          },
+            const isSingleMode = !window.tree3.options.multiSelectEnabled && !window.tree3.options.cascadeSelectChildren;
+
+            const header = isSingleMode
+                    ? `Selected (Tree 3):`
+                    : `Selected (Tree 3) – ${count} selected:`;
+
+            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
+          }
+
+          ,
             showSelectAllButton: false,
             showExpandCollapseAllButtons: true,
             onRenderNode: (nodeData, nodeContentWrapperElement) => {
@@ -289,8 +306,15 @@
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
             const output = document.getElementById('output4');
+            const count = names.length;
 
-            output.textContent = `Selected (Tree 4):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
+            const isSingleMode = !window.tree4.options.multiSelectEnabled && !window.tree4.options.cascadeSelectChildren;
+
+            const header = isSingleMode
+                    ? `Selected (Tree 4):`
+                    : `Selected (Tree 4) – ${count} selected:`;
+
+            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
           }
         });
         document.getElementById('output4').textContent = 'Selected (Tree 4):';
@@ -309,8 +333,15 @@
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
             const output = document.getElementById('output5');
+            const count = names.length;
 
-            output.textContent = `Selected (Tree 5):` + (names.length > 0 ? `\n[${names.join(', ')}]` : '');
+            const isSingleMode = !window.tree5.options.multiSelectEnabled && !window.tree5.options.cascadeSelectChildren;
+
+            const header = isSingleMode
+                    ? `Selected (Tree 5):`
+                    : `Selected (Tree 5) – ${count} selected:`;
+
+            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
           }
         });
         document.getElementById('output5').textContent = 'Selected (Tree 5):';
