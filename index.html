@@ -212,14 +212,27 @@
             const output = document.getElementById('output2');
             const count = names.length;
 
-            const isSingleMode = !window.tree2.options.multiSelectEnabled && !window.tree2.options.cascadeSelectChildren;
+            const opts = window.tree2.options;
 
-            const header = isSingleMode
-                    ? `Selected (Tree 2):`
-                    : `Selected (Tree 2) – ${count} selected:`;
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            const header = `${modeLabel}, ${countLabel}:`;
 
             output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
           }
+
           ,
             showSelectAllButton: true,
             showExpandCollapseAllButtons: false
@@ -239,14 +252,27 @@
             const output = document.getElementById('output3');
             const count = names.length;
 
-            const isSingleMode = !window.tree3.options.multiSelectEnabled && !window.tree3.options.cascadeSelectChildren;
+            const opts = window.tree3.options;
 
-            const header = isSingleMode
-                    ? `Selected (Tree 3):`
-                    : `Selected (Tree 3) – ${count} selected:`;
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            const header = `${modeLabel}, ${countLabel}:`;
 
             output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
           }
+
 
           ,
             showSelectAllButton: false,
@@ -308,14 +334,27 @@
             const output = document.getElementById('output4');
             const count = names.length;
 
-            const isSingleMode = !window.tree4.options.multiSelectEnabled && !window.tree4.options.cascadeSelectChildren;
+            const opts = window.tree4.options;
 
-            const header = isSingleMode
-                    ? `Selected (Tree 4):`
-                    : `Selected (Tree 4) – ${count} selected:`;
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            const header = `${modeLabel}, ${countLabel}:`;
 
             output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
           }
+
         });
         document.getElementById('output4').textContent = 'Selected (Tree 4):';
 
@@ -335,14 +374,27 @@
             const output = document.getElementById('output5');
             const count = names.length;
 
-            const isSingleMode = !window.tree5.options.multiSelectEnabled && !window.tree5.options.cascadeSelectChildren;
+            const opts = window.tree5.options;
 
-            const header = isSingleMode
-                    ? `Selected (Tree 5):`
-                    : `Selected (Tree 5) – ${count} selected:`;
+            let modeLabel = '';
+            if (opts.cascadeSelectChildren) {
+              modeLabel = 'Cascade Children Mode';
+            } else if (opts.multiSelectEnabled) {
+              modeLabel = 'Multi Selection Mode';
+            } else {
+              modeLabel = 'Single Selection Mode';
+            }
+
+            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
+                    ? `${count} ${nodeWord} selected`
+                    : `Node selected`;
+
+            const header = `${modeLabel}, ${countLabel}:`;
 
             output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
           }
+
         });
         document.getElementById('output5').textContent = 'Selected (Tree 5):';
 
