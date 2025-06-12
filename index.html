@@ -118,19 +118,35 @@
 
 <p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering</p>
 <div id="myTreeview2" class="my-treeview-container"></div>
-<pre id="output2" class="tree-output"></pre>
+<div id="tree-output2" style="text-align: center; display: none;">
+  <div id="label2" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output2" class="tree-output"></pre>
+</div>
+
 
 <p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
 <div id="myTreeview3" class="my-treeview-container"></div>
-<pre id="output3" class="tree-output"></pre>
+<div id="tree-output3" style="text-align: center; display: none;">
+  <div id="label3" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output3" class="tree-output"></pre>
+</div>
+
 
 <p class="section-header">Treeview 4: Single-Select with Cascade Children</p>
 <div id="myTreeview4" class="my-treeview-container"></div>
-<pre id="output4" class="tree-output"></pre>
+<div id="tree-output4" style="text-align: center; display: none;">
+  <div id="label4" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output4" class="tree-output"></pre>
+</div>
+
 
 <p class="section-header">Treeview 5: Checkbox Selection Enabled (Multi-Select)</p>
 <div id="myTreeview5" class="my-treeview-container"></div>
-<pre id="output5" class="tree-output"></pre>
+<div id="tree-output5" style="text-align: center; display: none;">
+  <div id="label5" style="margin-bottom: 6px; font-weight: bold;"></div>
+  <pre id="output5" class="tree-output"></pre>
+</div>
+
 
 
 
@@ -209,10 +225,18 @@
             multiSelectEnabled: true,
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label2');
             const output = document.getElementById('output2');
+            const wrapper = document.getElementById('tree-output2');
             const count = names.length;
-
             const opts = window.tree2.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none';
+              return;
+            }
+
+            wrapper.style.display = 'block';
 
             let modeLabel = '';
             if (opts.cascadeSelectChildren) {
@@ -228,10 +252,10 @@
                     ? `${count} ${nodeWord} selected`
                     : `Node selected`;
 
-            const header = `${modeLabel}, ${countLabel}:`;
-
-            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
+            label.textContent = `${modeLabel}, ${countLabel}:`;
+            output.textContent = `[${names.join(', ')}]`;
           }
+
 
           ,
             showSelectAllButton: true,
@@ -249,10 +273,19 @@
             multiSelectEnabled: false,
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label3');
             const output = document.getElementById('output3');
+            const wrapper = document.getElementById('tree-output3');
             const count = names.length;
 
             const opts = window.tree3.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none'; // Verstecken wenn leer
+              return;
+            }
+
+            wrapper.style.display = 'block'; // Zeigen wenn etwas gewählt ist
 
             let modeLabel = '';
             if (opts.cascadeSelectChildren) {
@@ -270,8 +303,10 @@
 
             const header = `${modeLabel}, ${countLabel}:`;
 
-            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
+            label.textContent = header;
+            output.textContent = `[${names.join(', ')}]`;
           }
+
 
 
           ,
@@ -317,7 +352,8 @@
                 }
             }
         });
-        document.getElementById('output3').textContent = 'Selected (Tree 3):';
+      document.getElementById('label3').textContent = 'Single Selection Mode, Node selected:';
+      document.getElementById('output3').textContent = '';
 
 
         // NEW: Initialize Treeview 4: Single-Select with Cascade Children
@@ -331,10 +367,18 @@
             cascadeSelectChildren: true, // Enable cascading selection
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label4');
             const output = document.getElementById('output4');
+            const wrapper = document.getElementById('tree-output4');
             const count = names.length;
-
             const opts = window.tree4.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none';
+              return;
+            }
+
+            wrapper.style.display = 'block';
 
             let modeLabel = '';
             if (opts.cascadeSelectChildren) {
@@ -345,15 +389,15 @@
               modeLabel = 'Single Selection Mode';
             }
 
-            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const nodeWord = count === 1 ? 'Node' : 'Node(s)';
             const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
                     ? `${count} ${nodeWord} selected`
                     : `Node selected`;
 
-            const header = `${modeLabel}, ${countLabel}:`;
-
-            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
+            label.textContent = `${modeLabel}, ${countLabel}:`;
+            output.textContent = `[${names.join(', ')}]`;
           }
+
 
         });
         document.getElementById('output4').textContent = 'Selected (Tree 4):';
@@ -371,10 +415,18 @@
             showSelectAllButton: true, // Select All button now applies to checkboxes
           onSelectionChange: (selectedNodes) => {
             const names = selectedNodes.map(n => `"${n.name}"`);
+            const label = document.getElementById('label5');
             const output = document.getElementById('output5');
+            const wrapper = document.getElementById('tree-output5');
             const count = names.length;
-
             const opts = window.tree5.options;
+
+            if (count === 0) {
+              wrapper.style.display = 'none';
+              return;
+            }
+
+            wrapper.style.display = 'block';
 
             let modeLabel = '';
             if (opts.cascadeSelectChildren) {
@@ -385,15 +437,15 @@
               modeLabel = 'Single Selection Mode';
             }
 
-            const nodeWord = count === 1 ? 'Node' : 'Nodes';
+            const nodeWord = count === 1 ? 'Node' : 'Node(s)';
             const countLabel = opts.multiSelectEnabled || opts.cascadeSelectChildren
                     ? `${count} ${nodeWord} selected`
                     : `Node selected`;
 
-            const header = `${modeLabel}, ${countLabel}:`;
-
-            output.textContent = header + (count > 0 ? `\n[${names.join(', ')}]` : '');
+            label.textContent = `${modeLabel}, ${countLabel}:`;
+            output.textContent = `[${names.join(', ')}]`;
           }
+
 
         });
         document.getElementById('output5').textContent = 'Selected (Tree 5):';
