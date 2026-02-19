@@ -149,7 +149,7 @@
 </div>
 
 
-<p class="section-header">Treeview 6: Checkbox Selection Enabled (Multi-Select)</p>
+<p class="section-header">Treeview 6: Checkbox Selection Enabled (Multi-Select), Children Shown on Search Match</p>
 <div id="myTreeview5" class="my-treeview-container"></div>
 <div id="tree-output5" style="text-align: center;">
     <div id="label5" style="margin-bottom: 6px; font-weight: bold;">0 Nodes selected:</div>
@@ -355,6 +355,7 @@
             containerId: 'myTreeview5',
             data: treeData,
             searchEnabled: true,
+            showChildrenOnSearch: true,
             initiallyExpanded: false,
             multiSelectEnabled: true, // Checkboxes typically imply multi-select
             checkboxSelectionEnabled: true, // Enable checkbox selection
