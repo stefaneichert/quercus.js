@@ -185,6 +185,21 @@
     transform: translateY(1px);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
+.treeview-control-button.treeview-btn-icon-only {
+    min-width: 0;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    flex-grow: 0;
+    font-size: 1.2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.treeview-btn-icon {
+    display: inline-block;
+    line-height: 1;
+}
 
 
 .treeview-checkbox {

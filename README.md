@@ -32,9 +32,9 @@ Features
 * **Single-Node Selection:** Supports selecting only one node at a time.
 * **Cascading Selection:** Option to automatically select/deselect all child nodes when a parent node is selected (works with both single and multi-select modes).
 * **Checkbox Selection:** Display checkboxes next to nodes for intuitive selection, positioned between the expander icon and the node label.
-* **Programmatic Selection:** Select or deselect nodes by their ID via a public API.
+* **Programmatic Selection:** Select or deselect nodes by their ID, or select/deselect all nodes at once via a public API.
 * **Customizable Node Rendering:** Provides a callback function (onRenderNode) to allow developers to define how each node's content is displayed, including custom icons, descriptions, and statuses.
-* **Global Control Buttons:** Optional "Select All/Deselect All" and "Expand All/Collapse All" buttons for quick tree manipulation.
+* **Global Control Buttons:** Optional "Select All/Deselect All", "Invert Selection", and "Expand All/Collapse All" buttons for quick tree manipulation. Buttons can display text, icons, or both, and always show a tooltip on hover.
 * **Disable Node Selection:** Ability to disable selection for the entire tree (nodeSelectionEnabled: false).
 * **Individual Node Selectability:** Control the selectable property for individual nodes in your data, preventing them from being selected if set to false. Non-selectable nodes are visually dimmed and non-interactive for selection.
 ---
@@ -192,6 +192,7 @@ const tree2 = new Treeview({
 | `showSelectAllButton`          | `boolean`       | `false`          | If `true`, `multiSelectEnabled` is `true`, `nodeSelectionEnabled` is `true`, and `checkboxSelectionEnabled` is `true`, a "Select All" / "Deselect All" button will be displayed above the tree.                                                                                                            |
 | `showInvertSelectionButton`    | `boolean`       | `false`          | If `true`, an "Invert Selection" button will be displayed above the tree.                                                                                                                                                                                                                                  |
 | `showExpandCollapseAllButtons` | `boolean`       | `false`          | If `true`, "Expand All" and "Collapse All" buttons will be displayed above the tree, allowing bulk expansion or collapse of all nodes.                                                                                                                                                                     |
+| `buttonStyle`                  | `string`        | `'text'`           | Controls how control buttons are rendered. `'text'` shows labels only, `'icons'` shows icons only (compact, with tooltip on hover), `'both'` shows icon and label together. All buttons always have a `title` attribute for hover tooltips.                                                                   |
 | `nodeSelectionEnabled`         | `boolean`       | `true`           | If `true`, nodes can be selected. If `false`, node selection is disabled, and `onSelectionChange` will not be triggered by clicks on nodes or checkboxes.                                                                                                                                                  |
 | `cascadeSelectChildren`        | `boolean`       | `false`          | If `true` selecting a parent node will also select all of its children. If `multiSelectEnabled` is `false`, Clicking another node will deselect the previous group and select the new one along with its children. If `multiSelectEnabled` is `true` multiple selections are possible.                     |
 | `checkboxSelectionEnabled`     | `boolean`       | `false`          | If `true`, a checkbox will be displayed next to each node. When enabled, node selection is primarily controlled by interacting with these checkboxes. Clicking the node's text will not directly toggle selection.                                                                                         |
@@ -224,6 +225,15 @@ You can interact with your `Treeview` instance after it's been initialized:
     ```javascript
     tree1.selectNodeById('doc-alpha', true);  // Selects the node with ID 'doc-alpha'
     tree1.selectNodeById('doc-beta', false); // Deselects the node with ID 'doc-beta'
+    ```
+
+* **`selectAll(shouldSelect: boolean = true): void`**
+  Programmatically selects or deselects all selectable nodes in the tree. Requires `multiSelectEnabled` to be `true` and `cascadeSelectChildren` to be `false`.
+    * `shouldSelect`: A boolean indicating whether to select (`true`, default) or deselect (`false`) all nodes.
+    ```javascript
+    tree1.selectAll();        // Selects all selectable nodes
+    tree1.selectAll(true);    // Selects all selectable nodes
+    tree1.selectAll(false);   // Deselects all nodes
     ```
 
 * **`search(searchTerm: string): void`**

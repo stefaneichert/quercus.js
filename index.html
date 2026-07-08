@@ -117,8 +117,7 @@
 <p class="section-header">Treeview 1: Default tree, Node Selection Disabled</p>
 <div id="myTreeview1" class="my-treeview-container"></div>
 
-<p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All Button, Default Rendering, Custom Search
-    Placeholder</p>
+<p class="section-header">Treeview 2: Multi-Select, Select All/Deselect All &amp; Invert Selection Buttons (buttonStyle: 'both'), Custom Search Placeholder</p>
 <div id="myTreeview2" class="my-treeview-container"></div>
 <div id="tree-output2" style="text-align: center;">
     <div id="label2" style="margin-bottom: 6px; font-weight: bold;">0 Nodes selected:</div>
@@ -126,7 +125,7 @@
 </div>
 
 
-<p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering</p>
+<p class="section-header">Treeview 3: Single-Select, Expand/Collapse All Buttons (buttonStyle: 'icons'), Custom Rendering</p>
 <div id="myTreeview3" class="my-treeview-container"></div>
 <div id="tree-output3" style="text-align: center;">
     <div id="label3" style="margin-bottom: 6px; font-weight: bold;">0 Nodes selected:</div>
@@ -262,11 +261,13 @@
                 output.textContent = `[${names.join(', ')}]`;
             },
             showSelectAllButton: true,
-            showExpandCollapseAllButtons: false
+            showInvertSelectionButton: true,
+            showExpandCollapseAllButtons: true,
+            buttonStyle: 'both'
         });
 
 
-        // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons, Custom Rendering
+        // Initialize Treeview 3: Single-Select, Expand/Collapse All Buttons (buttonStyle: 'icons'), Custom Rendering
         window.tree3 = new Treeview({
             containerId: 'myTreeview3',
             data: treeData,
@@ -285,6 +286,7 @@
             },
             showSelectAllButton: false,
             showExpandCollapseAllButtons: true,
+            buttonStyle: 'icons',
             onRenderNode: (nodeData, nodeContentWrapperElement) => {
                 nodeContentWrapperElement.innerHTML = '';
 
