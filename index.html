@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quercus.js Demo</title>
@@ -167,6 +168,13 @@
 
 <p class="section-header">Treeview 8: Non selectable nodes via JSON data "selectable: false"</p>
 <div id="myTreeview8" class="my-treeview-container"></div>
+
+<p class="section-header">Treeview 9: Multi-Select, All Buttons (buttonStyle: 'bootstrapIcons') — requires Bootstrap Icons</p>
+<div id="myTreeview9" class="my-treeview-container"></div>
+<div id="tree-output9" style="text-align: center;">
+    <div id="label9" style="margin-bottom: 6px; font-weight: bold;">0 Nodes selected:</div>
+    <pre id="output9" class="tree-output">[]</pre>
+</div>
 
 <div id="tree-output8" style="text-align: center;">
     <button class="treeview-control-button" onclick="tree8.selectNodeById('videos-root', true)">Select Videos</button>
@@ -561,6 +569,26 @@
             }
         });
 
+        // Initialize Treeview 9: bootstrapIcons buttonStyle demo
+        window.tree9 = new Treeview({
+            containerId: 'myTreeview9',
+            data: treeData,
+            searchEnabled: true,
+            multiSelectEnabled: true,
+            showSelectAllButton: true,
+            showInvertSelectionButton: true,
+            showExpandCollapseAllButtons: true,
+            buttonStyle: 'bootstrapIcons',
+            onSelectionChange: (selectedNodes) => {
+                const names = selectedNodes.map(n => `"${n.name}"`);
+                const label = document.getElementById('label9');
+                const output = document.getElementById('output9');
+                const count = names.length;
+                const nodeWord = count === 1 ? 'Node' : 'Nodes';
+                label.textContent = `${count} ${nodeWord} selected:`;
+                output.textContent = `[${names.join(', ')}]`;
+            }
+        });
     });
 
 

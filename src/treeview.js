@@ -221,7 +221,7 @@
             if (this.options.showSelectAllButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled && !this.options.cascadeSelectChildren) {
                 this.selectAllButton = document.createElement('button');
                 this.selectAllButton.classList.add('treeview-control-button', 'treeview-select-all');
-                this._setButtonContent(this.selectAllButton, '☑', 'Select All', 'Select All');
+                this._setButtonContent(this.selectAllButton, '☑', 'Select All', 'Select All', 'bi-check-square');
                 buttonContainer.appendChild(this.selectAllButton);
 
                 this.selectAllButton.addEventListener('click', () => this._toggleSelectAll());
@@ -230,7 +230,7 @@
             if (this.options.showInvertSelectionButton && this.options.multiSelectEnabled && this.options.nodeSelectionEnabled && !this.options.cascadeSelectChildren) {
                 this.invertSelectionButton = document.createElement('button');
                 this.invertSelectionButton.classList.add('treeview-control-button', 'treeview-invert-selection');
-                this._setButtonContent(this.invertSelectionButton, '⇅', 'Invert Selection', 'Invert Selection');
+                this._setButtonContent(this.invertSelectionButton, '⇅', 'Invert Selection', 'Invert Selection', 'bi-arrow-left-right');
                 buttonContainer.appendChild(this.invertSelectionButton);
 
                 this.invertSelectionButton.addEventListener('click', () => this.invertSelection());
@@ -239,14 +239,14 @@
             if (this.options.showExpandCollapseAllButtons) {
                 this.expandAllButton = document.createElement('button');
                 this.expandAllButton.classList.add('treeview-control-button', 'treeview-expand-all');
-                this._setButtonContent(this.expandAllButton, '＋', 'Expand All', 'Expand All');
+                this._setButtonContent(this.expandAllButton, '＋', 'Expand All', 'Expand All', 'bi-plus-square');
                 buttonContainer.appendChild(this.expandAllButton);
 
                 this.expandAllButton.addEventListener('click', () => this._expandAll());
 
                 this.collapseAllButton = document.createElement('button');
                 this.collapseAllButton.classList.add('treeview-control-button', 'treeview-collapse-all');
-                this._setButtonContent(this.collapseAllButton, '－', 'Collapse All', 'Collapse All');
+                this._setButtonContent(this.collapseAllButton, '－', 'Collapse All', 'Collapse All', 'bi-dash-square');
                 buttonContainer.appendChild(this.collapseAllButton);
 
                 this.collapseAllButton.addEventListener('click', () => this._collapseAll());
@@ -264,12 +264,18 @@
          * @param {string} icon - The icon character.
          * @param {string} text - The label text.
          * @param {string} title - The tooltip title.
+         * @param {string} [biClass] - Bootstrap Icons class name (e.g. 'bi-check-square'), used when buttonStyle is 'bootstrapIcons'.
          */
-        _setButtonContent(button, icon, text, title) {
+        _setButtonContent(button, icon, text, title, biClass) {
             const style = this.options.buttonStyle || 'text';
             button.title = title;
             button.innerHTML = '';
-            if (style === 'icons') {
+            if (style === 'bootstrapIcons') {
+                const iconEl = document.createElement('i');
+                iconEl.classList.add('bi', biClass || 'bi-square');
+                button.appendChild(iconEl);
+                button.classList.add('treeview-btn-icon-only');
+            } else if (style === 'icons') {
                 const iconSpan = document.createElement('span');
                 iconSpan.classList.add('treeview-btn-icon');
                 iconSpan.textContent = icon;
@@ -342,7 +348,8 @@
             if (this.selectAllButton) {
                 const icon = shouldSelectAll ? '☐' : '☑';
                 const text = shouldSelectAll ? 'Deselect All' : 'Select All';
-                this._setButtonContent(this.selectAllButton, icon, text, text);
+                const biClass = shouldSelectAll ? 'bi-square' : 'bi-check-square';
+                this._setButtonContent(this.selectAllButton, icon, text, text, biClass);
             }
             this._triggerSelectionChange();
         }
@@ -691,7 +698,8 @@
                 const isAllSelected = allTrulySelectableNodes.length > 0 && this.selectedNodes.size === allTrulySelectableNodes.length;
                 const icon = isAllSelected ? '☐' : '☑';
                 const text = isAllSelected ? 'Deselect All' : 'Select All';
-                this._setButtonContent(this.selectAllButton, icon, text, text);
+                const biClass = isAllSelected ? 'bi-square' : 'bi-check-square';
+                this._setButtonContent(this.selectAllButton, icon, text, text, biClass);
             }
         }
         _searchTree(searchTerm) {
@@ -1016,7 +1024,8 @@
             if (this.selectAllButton) {
                 const icon = shouldSelect ? '☐' : '☑';
                 const text = shouldSelect ? 'Deselect All' : 'Select All';
-                this._setButtonContent(this.selectAllButton, icon, text, text);
+                const biClass = shouldSelect ? 'bi-square' : 'bi-check-square';
+                this._setButtonContent(this.selectAllButton, icon, text, text, biClass);
             }
             this._triggerSelectionChange();
         }
@@ -1081,7 +1090,8 @@
                 const isAllSelected = allSelectableNodes.length > 0 && this.selectedNodes.size === allSelectableNodes.length;
                 const icon = isAllSelected ? '☐' : '☑';
                 const text = isAllSelected ? 'Deselect All' : 'Select All';
-                this._setButtonContent(this.selectAllButton, icon, text, text);
+                const biClass = isAllSelected ? 'bi-square' : 'bi-check-square';
+                this._setButtonContent(this.selectAllButton, icon, text, text, biClass);
             }
             this._triggerSelectionChange();
         }
